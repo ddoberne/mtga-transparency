@@ -1,7 +1,8 @@
 class Event:
-  def __init__(self, rounds, elim_thresh, bo1):
+  def __init__(self, rounds, win_thresh = 500, loss_thresh = 500, bo1 = True):
     self.rounds = rounds
-    self.elim_threshold = elim_thresh
+    self.win_thresh = win_thresh
+    self.loss_thresh = loss_thresh
     self.bo1 = bo1
 
   def get_distributions(self, winrate):
@@ -24,13 +25,13 @@ class Event:
         # If loss
         new_key = f"{wins}-{losses + 1}"
         if new_key not in new_results.keys():
-          new_results[new_key] = {"wins": wins, "losses": losses + 1, "distribution": 0.0, "eliminated": losses >= self.elim_threshold}
+          new_results[new_key] = {"wins": wins, "losses": losses + 1, "distribution": 0.0, "eliminated": losses >= self.loss_thresh}
         new_results[new_key]["distribution"] += results[key]["distribution"] * (1 - winrate)
 
         # If win
         new_key = f"{wins + 1}-{losses}"
         if new_key not in new_results.keys():
-          new_results[new_key] = {"wins": wins + 1, "losses": losses, "distribution": 0.0, "eliminated": losses >= self.elim_threshold}
+          new_results[new_key] = {"wins": wins + 1, "losses": losses, "distribution": 0.0, "eliminated": wins >= self.win_thresh}
         new_results[new_key]["distribution"] += results[key]["distribution"] * winrate
 
       results = new_results
