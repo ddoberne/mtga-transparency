@@ -1,5 +1,7 @@
 import streamlit as st
 import event
+import numpy as np
+import pandas as pd
 
 gem_bundle_prices = ("$4.99", "$9.99", "$19.99", "$49.99", "$99.99")
 gem_bundle_values = (750.0/5, 1600.0/10, 3400.0/20, 9200.0/50, 20000.0/100)
@@ -16,8 +18,11 @@ aggregate = st.sidebar.checkbox('Aggregate results with same payouts')
 
 st.title("MTGA Cost Transparency Key")
 quick_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
-results = quick_draft.get_distribution(user_winrate)
+results = quick_draft.get_distribution(user_winrate, simplify_results = False)
 st.write(results)
+df = pd.DataFrame(results)
+st.dataframe(df)
+st.line_chart(df) 
 
 
 
