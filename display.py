@@ -1,0 +1,11 @@
+import streamlit as st
+
+gem_bundle_prices = ("$4.99", "$9.99", "$19.99", "$49.99", "$99.99")
+gem_bundle_values = (750.0/5, 1600.0/10, 3400.0/20, 9200.0/50, 20000.0/100)
+gems_per_usd = {}
+for i in range(0, len(gem_bundle_prices)):
+  gems_per_usd[gem_bundle_prices[i]] = gem_bundle_values[i]
+  
+user_bundle = st.sidebar.selectbox('Which bundle do you purchase?', gem_bundle_prices)
+user_gems_per_usd = gems_per_usd[user_bundle]
+st.sidebar.write(f'Your gems are worth {user_gems_per_usd:.2f} gems per dollar)
