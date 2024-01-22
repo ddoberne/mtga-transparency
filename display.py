@@ -39,3 +39,4 @@ with tab_dict['Traditional Draft']:
   results = traditional_draft.get_distributions(user_winrate, simplify_results = False)
   gem_prizes = {0:100, 1:250, 2:1000, 3:2500}
   pack_prizes = {0:1, 1:1, 2:3, 3:6}
+  st.write('test')
