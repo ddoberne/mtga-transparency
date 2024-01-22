@@ -14,7 +14,7 @@ user_gems_per_usd = gems_per_usd[user_bundle]
 st.sidebar.write(f'Your gems are worth {user_gems_per_usd:.2f} gems per dollar.')
 user_winrate = st.sidebar.slider(label = 'Select game winrate:', min_value = 0.00, max_value = 1.00, value = 0.5, step = 0.01)
 st.sidebar.write(f'You win **{100 * ((user_winrate ** 2) + (2 * user_winrate * user_winrate * (1 - user_winrate))):.0f}** of your Bo3s.')
-aggregate = st.sidebar.checkbox('Aggregate results with same payouts')
+aggregate = st.sidebar.checkbox('Aggregate results with }same payouts')
 
 st.title("MTGA Cost Transparency Key")
 
@@ -34,5 +34,8 @@ with tab_dict['Quick Draft']:
   st.dataframe(df)
   st.line_chart(df, y = 'distribution') 
 
-
-
+with tab_dict['Traditional Draft']:
+  traditional_draft = event.Event(rounds = 3, win_thresh = 3, loss_thresh = 3, bo1 = False)
+  results = traditional_draft.get_distributions(user_winrate, simplify_results = False)
+  gem_prizes = {0:100, 1:250, 2:1000, 3:2500}
+  pack_prizes = {0:1, 1:1, 2:3, 3:6}
