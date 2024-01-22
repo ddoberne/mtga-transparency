@@ -22,7 +22,7 @@ results = quick_draft.get_distribution(user_winrate, simplify_results = False)
 st.write(results)
 df = pd.DataFrame(results)
 st.dataframe(df)
-st.line_chart(df) 
+st.line_chart(df, y = 'distribution') 
 
 
 
