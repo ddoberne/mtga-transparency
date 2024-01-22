@@ -17,12 +17,22 @@ st.sidebar.write(f'You win **{100 * ((user_winrate ** 2) + (2 * user_winrate * u
 aggregate = st.sidebar.checkbox('Aggregate results with same payouts')
 
 st.title("MTGA Cost Transparency Key")
-quick_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
-results = quick_draft.get_distributions(user_winrate, simplify_results = False)
-st.write(results)
-df = pd.DataFrame(results).transpose()
-st.dataframe(df)
-st.line_chart(df, y = 'distribution') 
+
+tab_names = ['Quick Draft', 'Traditional Draft', 'Premier Draft', 'Constructed Event', 'Traditional Constructed Event', 'Arena Open', 'Arena Open (Day 2 Only)', 'Metagame Challenge']
+tabs = st.tabs(tab_names)
+tab_dict = {}
+for i in range(len(tabs)):
+  tab_dict[tab_names[i]] = tabs[i]
+
+with tab_dict['Quick Draft']:
+  quick_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
+  results = quick_draft.get_distributions(user_winrate, simplify_results = False)
+  gem_prizes = {0:50, 1:100, 2:200, 3:300, 4:450, 5:650, 6:850, 7:950}
+  pack_prizes = {0:1.2, 1:1.22, 2:1.24, 3:1.26, 4:1.3, 5:1.35, 6:1.4, 7:2}
+  print(results)
+  df = pd.DataFrame(results).transpose()
+  st.dataframe(df)
+  st.line_chart(df, y = 'distribution') 
 
 
 
