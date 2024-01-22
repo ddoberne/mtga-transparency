@@ -20,7 +20,7 @@ st.title("MTGA Cost Transparency Key")
 quick_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
 results = quick_draft.get_distributions(user_winrate, simplify_results = False)
 st.write(results)
-df = pd.DataFrame(results)
+df = pd.DataFrame(results).transpose()
 st.dataframe(df)
 st.line_chart(df, y = 'distribution') 
 
