@@ -5,7 +5,7 @@ class Event:
     self.loss_thresh = loss_thresh
     self.bo1 = bo1
 
-  def get_distributions(self, winrate):
+  def get_distributions(self, winrate, simplify_results = False):
     if self.bo1 == False:
       winrate = (winrate ** 2) + (2 * winrate * winrate * (1 - winrate))
     results = {"0-0":{"wins": 0, "losses": 0, "distribution": 1.0, "eliminated": False}}
@@ -36,6 +36,7 @@ class Event:
 
       results = new_results
     results.pop("void", None)
-    for key in results:
-      results[key] = results[key]["distribution"]
+    if simplify_results:
+      for key in results:
+        results[key] = results[key]["distribution"]
     return results
