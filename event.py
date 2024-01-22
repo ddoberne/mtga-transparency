@@ -6,7 +6,7 @@ class Event:
 
   def get_distributions(self, winrate):
     if self.bo1 == False:
-      winrate = (winrate ** 2) + (2 * winrate * (1 - winrate))
+      winrate = (winrate ** 2) + (2 * winrate * winrate * (1 - winrate))
     results = {"0-0":{"wins": 0, "losses": 0, "distribution": 1.0, "eliminated": False}}
     for round in range(1, self.rounds + 1):
       new_results = {"void": 0}
