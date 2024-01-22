@@ -25,13 +25,13 @@ class Event:
         # If loss
         new_key = f"{wins}-{losses + 1}"
         if new_key not in new_results.keys():
-          new_results[new_key] = {"wins": wins, "losses": losses + 1, "distribution": 0.0, "eliminated": losses >= self.loss_thresh}
+          new_results[new_key] = {"wins": wins, "losses": losses + 1, "distribution": 0.0, "eliminated": losses + 1 >= self.loss_thresh}
         new_results[new_key]["distribution"] += results[key]["distribution"] * (1 - winrate)
 
         # If win
         new_key = f"{wins + 1}-{losses}"
         if new_key not in new_results.keys():
-          new_results[new_key] = {"wins": wins + 1, "losses": losses, "distribution": 0.0, "eliminated": wins >= self.win_thresh}
+          new_results[new_key] = {"wins": wins + 1, "losses": losses, "distribution": 0.0, "eliminated": wins + 1 >= self.win_thresh}
         new_results[new_key]["distribution"] += results[key]["distribution"] * winrate
 
       results = new_results
