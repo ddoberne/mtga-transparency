@@ -18,7 +18,7 @@ aggregate = st.sidebar.checkbox('Aggregate results with same payouts')
 
 st.title("MTGA Cost Transparency Key")
 quick_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
-results = quick_draft.get_distribution(user_winrate, simplify_results = False)
+results = quick_draft.get_distributions(user_winrate, simplify_results = False)
 st.write(results)
 df = pd.DataFrame(results)
 st.dataframe(df)
