@@ -10,7 +10,12 @@ for i in range(0, len(gem_bundle_prices)):
 user_bundle = st.sidebar.selectbox('Which bundle do you purchase?', gem_bundle_prices)
 user_gems_per_usd = gems_per_usd[user_bundle]
 st.sidebar.write(f'Your gems are worth {user_gems_per_usd:.2f} gems per dollar.')
-user_winrate = st.sidebar.slider(label = 'Select game winrate:', min_value = 0.00, max_value = 1.00, step = 0.01)
-st.sidebar.write(f'You win {(user_winrate ** 2) + (2 * user_winrate * user_winrate * (1 - user_winrate):.2f} of your Bo3s.')
+user_winrate = st.sidebar.slider(label = 'Select game winrate:', min_value = 0.00, max_value = 1.00, value = 0.5, step = 0.01)
+st.sidebar.write(f'You win **{100 * (user_winrate ** 2) + (2 * user_winrate * user_winrate * (1 - user_winrate):.0f}** of your Bo3s.')
+aggregate = st.sidebar.checkbox('Aggregate results with same payouts')
+
+st.title("MTGA Cost Transparency Key")
+quick_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
+results = quick_draft.get_distribution(user_winrate)
 
 
