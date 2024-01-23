@@ -86,7 +86,7 @@ with tab_dict['Pr. Draft']:
   gem_prizes = {0:50, 1:100, 2:250, 3:1000, 4:1400, 5:1600, 6:1800, 7:2200}
   pack_prizes = {0:1, 1:1, 2:2, 3:2, 4:3, 5:4, 6:5, 7:6}
   entry_cost = 1500
-  permier_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
+  premier_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
   tab_info(premier_draft, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost)
 
 with tab_dict['Bo1 Constructed']:
