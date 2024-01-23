@@ -55,9 +55,12 @@ def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, 
   st.pyplot(fig)
   st.dataframe(df[[x_axis, '% of results', 'gem_payout', 'pack_prizes', 'usd_value']])
   ev = 0
+  pack_ev = 0
   for i in df.index:
     ev += df.loc[i, 'distribution'] * df.loc[i, 'gem_payout']
+    pack_ev += df.loc[i, 'distribution'] * df.loc[i, 'pack_payout']
   st.write(f'The expected gem payout for this event given a {winrate * 100}% winrate is {ev:.1f} gems.')
+  st.write(f'The expected pack payout is {pack_ev:.1f} packs.')
   if ev > entry_cost:
     st.write(f'That means an average gain of {ev - entry_cost:.1f} gems per event, or {(ev - entry_cost) * 100.0/entry_cost:.1f}%')
   else:
