@@ -31,7 +31,7 @@ for i in range(len(tabs)):
   tab_dict[tab_names[i]] = tabs[i]
 
 def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost):
-  results = quick_draft.get_distributions(user_winrate, simplify_results = False)
+  results = e.get_distributions(user_winrate, simplify_results = False)
   df = pd.DataFrame(results).transpose()
   x_axis = 'record'
   if aggregate:
