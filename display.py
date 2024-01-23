@@ -35,8 +35,8 @@ with tab_dict['Q. Draft']:
     df = df.groupby('wins').sum()['distribution']
     x = 'wins'
   df = df.reset_index()
-  df['gem_payout'] = df['wins'].apply(gem_prizes)
-  df['pack_prizes'] = df['wins'].apply(pack_prizes)
+  df['gem_payout'] = df['wins'].map(gem_prizes)
+  df['pack_prizes'] = df['wins'].map(pack_prizes)
   df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
   st.dataframe(df)
   plot = sns.lineplot(df, x = x, y = 'distribution')
