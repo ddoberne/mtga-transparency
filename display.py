@@ -44,6 +44,7 @@ def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, 
   df['pack_prizes'] = df['wins'].map(pack_prizes)
   df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
   fig, ax = plt.subplots()
+  st.dataframe(df)
   ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b')
   
   for x, y in zip(df[x_axis], df['% of results']):
