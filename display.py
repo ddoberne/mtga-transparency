@@ -63,8 +63,8 @@ with tab_dict['Q. Draft']:
   gem_prizes = {0:50, 1:100, 2:200, 3:300, 4:450, 5:650, 6:850, 7:950}
   pack_prizes = {0:1.2, 1:1.22, 2:1.24, 3:1.26, 4:1.3, 5:1.35, 6:1.4, 7:2}
   quick_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
-  tab_info(quick_draft, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd)
-  '''results = quick_draft.get_distributions(user_winrate, simplify_results = False)
+  #tab_info(quick_draft, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd)
+  results = quick_draft.get_distributions(user_winrate, simplify_results = False)
   df = pd.DataFrame(results).transpose()
   x_axis = 'record'
   if aggregate:
@@ -86,7 +86,7 @@ with tab_dict['Q. Draft']:
   ax.set_ylim(0, df['% of results'].max() + 5)
   plt.ylabel('% of results')
   plt.xlabel(x_axis)
-  st.pyplot(fig)'''
+  st.pyplot(fig)
 
 with tab_dict['Tr. Draft']:
   traditional_draft = event.Event(rounds = 3, win_thresh = 3, loss_thresh = 3, bo1 = False)
