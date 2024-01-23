@@ -32,6 +32,8 @@ for i in range(len(tabs)):
 def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd):
   results = e.get_distributions(winrate, simplify_results = False)
   df = pd.DataFrame(results).transpose()
+  print(df.columns)
+  print(df.index)
   x_axis = 'record'
   if aggregate:
     df = df.groupby('wins').sum()['distribution']
