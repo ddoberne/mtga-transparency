@@ -42,7 +42,6 @@ def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd):
   df['gem_payout'] = df['wins'].map(gem_prizes)
   df['pack_prizes'] = df['wins'].map(pack_prizes)
   df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
-  st.dataframe(df)
   fig, ax = plt.subplots()
   ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b')
   
@@ -53,7 +52,7 @@ def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd):
   plt.ylabel('% of results')
   plt.xlabel(x_axis)
   st.pyplot(fig)
-  st.dataframe(df)
+  st.dataframe(df[[x_axis, '% of results', 'gem_payout', 'pack_prizes', 'usd_value']].set_axis(x_axis)
   
 
 with tab_dict['Q. Draft']:
@@ -62,29 +61,6 @@ with tab_dict['Q. Draft']:
   pack_prizes = {0:1.2, 1:1.22, 2:1.24, 3:1.26, 4:1.3, 5:1.35, 6:1.4, 7:2}
   quick_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
   tab_info(quick_draft, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd)
-  results = quick_draft.get_distributions(user_winrate, simplify_results = False)
-  df = pd.DataFrame(results).transpose()
-  x_axis = 'record'
-  if aggregate:
-    df = df.groupby('wins').sum()['distribution']
-    x_axis = 'wins'
-  df = df.reset_index()
-  df = df.rename({'index':'record'})
-  df['% of results'] = df['distribution'] * 100
-  df['gem_payout'] = df['wins'].map(gem_prizes)
-  df['pack_prizes'] = df['wins'].map(pack_prizes)
-  df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
-  st.dataframe(df)
-  fig, ax = plt.subplots()
-  ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b')
-  
-  for x, y in zip(df[x_axis], df['% of results']):
-    plt.text(x = x, y = y + .3, s = '{:.1f}%'.format(y), color = 'blue')
-  ax.yaxis.set_major_formatter(mtick.PercentFormatter())
-  ax.set_ylim(0, df['% of results'].max() + 5)
-  plt.ylabel('% of results')
-  plt.xlabel(x_axis)
-  st.pyplot(fig)
 
 with tab_dict['Tr. Draft']:
   traditional_draft = event.Event(rounds = 3, win_thresh = 3, loss_thresh = 3, bo1 = False)
