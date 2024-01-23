@@ -19,7 +19,7 @@ user_gems_per_usd = gems_per_usd[user_bundle]
 st.sidebar.write(f'Your gems are worth **{user_gems_per_usd}** gems per dollar.')
 user_winrate = st.sidebar.slider(label = 'Select game winrate:', min_value = 0.00, max_value = 1.00, value = 0.5, step = 0.01)
 st.sidebar.write(f'You win **{100 * ((user_winrate ** 2) + (2 * user_winrate * user_winrate * (1 - user_winrate))):.1f}%** of your Bo3s.')
-aggregate = st.sidebar.checkbox('Aggregate results with }same payouts', value = True)
+aggregate = st.sidebar.checkbox('Aggregate results with same payouts', value = True)
 
 st.title("MTGA Cost Transparency Key")
 
@@ -32,8 +32,7 @@ for i in range(len(tabs)):
 def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd):
   results = e.get_distributions(winrate, simplify_results = False)
   df = pd.DataFrame(results).transpose()
-  print(df.columns)
-  print(df.index)
+  print(df)
   x_axis = 'record'
   if aggregate:
     df = df.groupby('wins').sum()['distribution']
