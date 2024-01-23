@@ -44,7 +44,6 @@ def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, 
   df['pack_prizes'] = df['wins'].map(pack_prizes)
   df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
   fig, ax = plt.subplots()
-  st.dataframe(df)
   ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b')
   
   for x, y in zip(df[x_axis], df['% of results']):
@@ -67,7 +66,7 @@ def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, 
   
 
 with tab_dict['Q. Draft']:
-  st.header(f'Quick Draft prize distribution for a {user_winrate}% winrate')
+  st.header(f'Quick Draft prize distribution for a {user_winrate * 100}% winrate')
   gem_prizes = {0:50, 1:100, 2:200, 3:300, 4:450, 5:650, 6:850, 7:950}
   pack_prizes = {0:1.2, 1:1.22, 2:1.24, 3:1.26, 4:1.3, 5:1.35, 6:1.4, 7:2}
   entry_cost = 750
@@ -75,8 +74,33 @@ with tab_dict['Q. Draft']:
   tab_info(quick_draft, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost)
 
 with tab_dict['Tr. Draft']:
-  traditional_draft = event.Event(rounds = 3, win_thresh = 3, loss_thresh = 3, bo1 = False)
-  results = traditional_draft.get_distributions(user_winrate, simplify_results = aggregate)
+  st.header(f'Traditional Draft prize distribution for a {user_winrate * 100}% winrate')
   gem_prizes = {0:100, 1:250, 2:1000, 3:2500}
   pack_prizes = {0:1, 1:1, 2:3, 3:6}
-  st.write('test')
+  entry_cost = 1500
+  traditional_draft = event.Event(rounds = 3, win_thresh = 3, loss_thresh = 3, bo1 = False)
+  tab_info(traditional_draft, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost)
+
+with tab_dict['Pr. Draft']:
+  st.header(f'Premier Draft prize distribution for a {user_winrate * 100}% winrate')
+  gem_prizes = {0:50, 1:100, 2:250, 3:1000, 4:1400, 5:1600, 6:1800, 7:2200}
+  pack_prizes = {0:1, 1:1, 2:2, 3:2, 4:3, 5:4, 6:5, 7:6}
+  entry_cost = 1500
+  permier_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
+  tab_info(premier_draft, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost)
+
+with tab_dict['Bo1 Constructed']:
+  st.header(f'Constructed Event prize distribution for a {user_winrate * 100}% winrate')
+  gem_prizes = {0:25, 1:50, 2:75, 3:200, 4:300, 5:400, 6:450, 7:500}
+  pack_prizes = {0:0, 1:0, 2:1, 3:1, 4:1, 5:2, 6:2, 7:3}
+  entry_cost = 750
+  constructed_event = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
+  tab_info(constructed_event, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost)
+
+with tab_dict['Bo3 Constructed']:
+  st.header(f'Traditional Constructed prize distribution for a {user_winrate * 100}% winrate')
+  gem_prizes = {0:50, 1:100, 2:150, 3:600, 4:800, 5:1000}
+  pack_prizes = {0:1, 1:1, 2:2, 3:2, 4:2, 5:3}
+  entry_cost = 750
+  traditional_constructed = event.Event(rounds = 5, win_thresh = 5, loss_thresh = 5, bo1 = False)
+  tab_info(traditional_constructed, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost)
