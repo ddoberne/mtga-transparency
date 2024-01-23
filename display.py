@@ -22,6 +22,7 @@ st.sidebar.write(f'You win **{100 * ((user_winrate ** 2) + (2 * user_winrate * u
 aggregate = st.sidebar.checkbox('Aggregate results with same payouts', value = True)
 
 st.title("MTGA Cost Transparency Key")
+#st.write('Currently updating, check back later!')
 
 tab_names = ['Q. Draft', 'Tr. Draft', 'Pr. Draft', 'Bo1 Constructed', 'Bo3 Constructed', 'Arena Open', 'Arena Open (Day 2 Only)', 'Metagame Challenge']
 tabs = st.tabs(tab_names)
@@ -58,9 +59,9 @@ def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, 
     ev += df.loc[i, 'distribution'] * df.loc[i, 'gem_payout']
   st.write(f'The expected gem payout for this event given a {winrate * 100}% winrate is {ev:.1f} gems.')
   if ev > entry_cost:
-    st.write(f'That means an average gain of {ev - entry_cost} gems per event, or {(ev - entry_cost) * 100.0/entry_cost:.1f}%')
+    st.write(f'That means an average gain of {ev - entry_cost:.1f} gems per event, or {(ev - entry_cost) * 100.0/entry_cost:.1f}%')
   else:
-    st.write(f'That means an average loss of {entry_cost - ev} gems per event, or {(entry_cost - ev) * 100.0/entry_cost:.1f}%')
+    st.write(f'That means an average loss of {entry_cost - ev:.1f} gems per event, or {(entry_cost - ev) * 100.0/entry_cost:.1f}%')
     
   
 
