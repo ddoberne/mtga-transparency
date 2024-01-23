@@ -58,7 +58,7 @@ def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, 
   pack_ev = 0
   for i in df.index:
     ev += df.loc[i, 'distribution'] * df.loc[i, 'gem_payout']
-    pack_ev += df.loc[i, 'distribution'] * df.loc[i, 'pack_payout']
+    pack_ev += df.loc[i, 'distribution'] * df.loc[i, 'pack_prizes']
   st.write(f'The expected gem payout for this event given a {winrate * 100}% winrate is {ev:.1f} gems.')
   st.write(f'The expected pack payout is {pack_ev:.1f} packs.')
   if ev > entry_cost:
