@@ -60,7 +60,7 @@ def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, 
   if ev > entry_cost:
     st.write(f'That means an average gain of {ev - entry_cost} gems per event, or {(ev - entry_cost) * 100.0/entry_cost:.1f}%')
   else:
-    st.write(f'That means an average loss of {entry_cost - ev} gems per event, or {(entry_cost - ev} * 100.0/entry_cost:.1f}%')
+    st.write(f'That means an average loss of {entry_cost - ev} gems per event, or {(entry_cost - ev) * 100.0/entry_cost:.1f}%')
     
   
 
