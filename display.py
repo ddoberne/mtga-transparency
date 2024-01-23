@@ -52,7 +52,7 @@ def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd):
   plt.ylabel('% of results')
   plt.xlabel(x_axis)
   st.pyplot(fig)
-  st.dataframe(df[[x_axis, '% of results', 'gem_payout', 'pack_prizes', 'usd_value']].set_axis(x_axis))
+  st.dataframe(df[[x_axis, '% of results', 'gem_payout', 'pack_prizes', 'usd_value']])
   
 
 with tab_dict['Q. Draft']:
