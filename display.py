@@ -39,8 +39,8 @@ with tab_dict['Q. Draft']:
   if aggregate:
     df = df.groupby('wins').sum()['distribution']
     x_axis = 'wins'
-  df['% of results'] = df['distribution'] * 100
   df = df.reset_index()
+  df['% of results'] = df['distribution'] * 100
   df['gem_payout'] = df['wins'].map(gem_prizes)
   df['pack_prizes'] = df['wins'].map(pack_prizes)
   df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
