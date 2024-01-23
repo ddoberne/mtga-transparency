@@ -35,11 +35,11 @@ with tab_dict['Q. Draft']:
   gem_prizes = {0:50, 1:100, 2:200, 3:300, 4:450, 5:650, 6:850, 7:950}
   pack_prizes = {0:1.2, 1:1.22, 2:1.24, 3:1.26, 4:1.3, 5:1.35, 6:1.4, 7:2}
   df = pd.DataFrame(results).transpose()
-  df['% of results'] = df['distribution'] * 100
   x_axis = 'index'
   if aggregate:
     df = df.groupby('wins').sum()['distribution']
     x_axis = 'wins'
+  df['% of results'] = df['distribution'] * 100
   df = df.reset_index()
   df['gem_payout'] = df['wins'].map(gem_prizes)
   df['pack_prizes'] = df['wins'].map(pack_prizes)
