@@ -2,6 +2,7 @@ import streamlit as st
 import event
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
 gem_bundle_prices = ("$4.99", "$9.99", "$19.99", "$49.99", "$99.99")
 gem_bundle_values = (750.0/5, 1600.0/10, 3400.0/20, 9200.0/50, 20000.0/100)
