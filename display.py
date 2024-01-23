@@ -26,14 +26,20 @@ for i in range(len(tabs)):
 
 with tab_dict['Q. Draft']:
   quick_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
-  results = quick_draft.get_distributions(user_winrate, simplify_results = aggregate)
+  results = quick_draft.get_distributions(user_winrate, simplify_results = False)
   gem_prizes = {0:50, 1:100, 2:200, 3:300, 4:450, 5:650, 6:850, 7:950}
   pack_prizes = {0:1.2, 1:1.22, 2:1.24, 3:1.26, 4:1.3, 5:1.35, 6:1.4, 7:2}
   df = pd.DataFrame(results).transpose()
-  print(df)
+  x = 'index'
+  if aggregate:
+    df = df.groupby('wins').sum()['distribution']
+    x = 'wins'
   df = df.reset_index()
+  df['gem_payout'] = df['wins'].apply(gem_prizes)
+  df['pack_prizes'] = df['wins'].apply(pack_prizes)
+  df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
   st.dataframe(df)
-  plot = sns.lineplot(df, x = 'index', y = 'distribution')
+  plot = sns.lineplot(df, x = x, y = 'distribution')
   st.pyplot(plot.fig)
 
 with tab_dict['Tr. Draft']:
