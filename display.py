@@ -38,7 +38,6 @@ def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd):
     x_axis = 'wins'
   df.reset_index()
   df = df.rename({'index':'record'})
-  df.set_index(x_axis)
   df['% of results'] = df['distribution'] * 100
   df['gem_payout'] = df['wins'].map(gem_prizes)
   df['pack_prizes'] = df['wins'].map(pack_prizes)
