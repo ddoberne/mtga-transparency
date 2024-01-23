@@ -40,6 +40,7 @@ def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd):
   df = df.rename({'index':'record'})
   st.write('here is the df')
   st.write(df)
+  st.write(df.columns)
   df['gem_payout'] = df['wins'].map(gem_prizes)
   df['pack_prizes'] = df['wins'].map(pack_prizes)
   df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
