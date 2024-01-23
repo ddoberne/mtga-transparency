@@ -29,7 +29,7 @@ tab_dict = {}
 for i in range(len(tabs)):
   tab_dict[tab_names[i]] = tabs[i]
 
-def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd):
+def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost):
   results = quick_draft.get_distributions(user_winrate, simplify_results = False)
   df = pd.DataFrame(results).transpose()
   x_axis = 'record'
@@ -53,14 +53,24 @@ def tab_info(e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd):
   plt.xlabel(x_axis)
   st.pyplot(fig)
   st.dataframe(df[[x_axis, '% of results', 'gem_payout', 'pack_prizes', 'usd_value']])
+  ev = 0
+  for i in df.index:
+    ev += df.loc[i, 'distribution'] * df.loc[i, 'gem_payout']
+  st.write(f'The expected gem payout for this event given a {winrate * 100}% winrate is {ev:.1f} gems.')
+  if ev > entry_cost:
+    st.write(f'That means an average gain of {ev - entry_cost} gems per event, or {(ev - entry_cost) * 100.0/entry_cost:.1f}%')
+  else:
+    st.write(f'That means an average loss of {entry_cost - ev} gems per event, or {(entry_cost - ev} * 100.0/entry_cost:.1f}%')
+    
   
 
 with tab_dict['Q. Draft']:
   st.header(f'Quick Draft prize distribution for a {user_winrate}% winrate')
   gem_prizes = {0:50, 1:100, 2:200, 3:300, 4:450, 5:650, 6:850, 7:950}
   pack_prizes = {0:1.2, 1:1.22, 2:1.24, 3:1.26, 4:1.3, 5:1.35, 6:1.4, 7:2}
+  entry_cost = 750
   quick_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
-  tab_info(quick_draft, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd)
+  tab_info(quick_draft, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost)
 
 with tab_dict['Tr. Draft']:
   traditional_draft = event.Event(rounds = 3, win_thresh = 3, loss_thresh = 3, bo1 = False)
