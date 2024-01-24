@@ -65,13 +65,13 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   for i in df.index:
     ev += df.loc[i, 'distribution'] * (df.loc[i, 'gem_payout'] + (200 * df.loc[i, 'play_in_points']))
     pack_ev += df.loc[i, 'distribution'] * df.loc[i, 'pack_prizes']
-  st.write(f'The expected gem payout for this event given a {winrate * 100}% winrate is **{ev:.1f}** gems (including play-in points).')
+  st.write(f'The expected gem payout for this event given a {winrate * 100:.0f}% winrate is **{ev:.1f}** gems (including play-in points).')
   st.write(f'The expected pack payout is **{pack_ev:.1f}** packs.')
   if ev > entry_cost:
     st.write(f'That means an average **gain** of **{ev - entry_cost:.1f}** gems per event, or **{(ev - entry_cost) * 100.0/entry_cost:.1f}%**')
   else:
     st.write(f'That means an average **loss** of **{entry_cost - ev:.1f}** gems per event, or **{(entry_cost - ev) * 100.0/entry_cost:.1f}%**')
-  st.write(f'This event converts **{entry_cost-ev:.1f}** gems to **{pack_ev:.1f}** packs, with an efficiency of **{(entry_cost-ev)/pack_ev:.1f}** gems per pack.')
+    st.write(f'This event converts **{entry_cost-ev:.1f}** gems to **{pack_ev:.1f}** packs, with an efficiency of **{(entry_cost-ev)/pack_ev:.1f}** gems per pack.')
 
 summary = {}
 
