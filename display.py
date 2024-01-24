@@ -58,9 +58,10 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
   df['usd_value'] += df['play_in_points'] * 200 / user_gems_per_usd
   fig, ax = plt.subplots(figsize = (8, 3))
-  ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b', linewidth = 2, label = f'{user_winrate * 100:.0f}% wr')
+  ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b', linewidth = 3, label = f'{user_winrate * 100:.0f}% wr')
   if show_default:
       ax.plot(default_df[[x_axis, '% of results']].set_index(x_axis), 'o-g', linewidth = 1, label = 'default')
+      plt.legend()
   for x, y in zip(df[x_axis], df['% of results']):
     plt.text(x = x, y = y + 1, s = '{:.1f}%'.format(y), color = 'blue')
   ax.yaxis.set_major_formatter(mtick.PercentFormatter())
