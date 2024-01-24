@@ -102,7 +102,7 @@ with tab_dict['Bo1 Constr.']:
   constructed_event = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
   tab_info(constructed_event, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost)
 
-with tab_dict['Bo3 Constr,']:
+with tab_dict['Bo3 Constr.']:
   st.header(f'Traditional Constructed prize distribution for a {user_winrate * 100}% winrate')
   gem_prizes = {0:50, 1:100, 2:150, 3:600, 4:800, 5:1000}
   pack_prizes = {0:1, 1:1, 2:2, 3:2, 4:2, 5:3}
