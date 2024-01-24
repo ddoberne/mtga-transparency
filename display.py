@@ -17,7 +17,7 @@ for i in range(0, len(gem_bundle_prices)):
 
 user_bundle = st.sidebar.selectbox('Which bundle do you purchase?', gem_bundle_prices)
 user_gems_per_usd = gems_per_usd[user_bundle]
-st.sidebar.write(f'Your gems are worth **{user_gems_per_usd}** gems per dollar.')
+st.sidebar.write(f'Your gems are worth **{user_gems_per_usd:.0f}** gems per dollar.')
 user_winrate = st.sidebar.slider(label = 'Select game winrate (%):', min_value = 0, max_value = 100, value = 50, step = 1)/100.0
 st.sidebar.write(f'You win **{100 * ((user_winrate ** 2) + (2 * user_winrate * user_winrate * (1 - user_winrate))):.1f}%** of your Bo3s.')
 aggregate = st.sidebar.checkbox('Aggregate results with same payouts', value = True)
@@ -35,7 +35,7 @@ column_config = {'usd_value': st.column_config.NumberColumn(label = None, format
                  '% of results': st.column_config.ProgressColumn(label = None, format = '%.1f', min_value = 0, max_value = 100)}
 
 def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost):
-  st.header(f'{tab_name} prize distribution for a {user_winrate * 100:.0f}% winrate')
+  st.header(f'{tab_name} prize distribution for a {user_winrate * 100:.0f}% winrate ({entry_cost} gem/${entry_cost/user_gems_per_usd:.2f} entry)')
   results = e.get_distributions(user_winrate, simplify_results = False)
   df = pd.DataFrame(results).transpose()
   x_axis = 'record'
