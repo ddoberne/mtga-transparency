@@ -21,6 +21,7 @@ st.sidebar.write(f'Your gems are worth **{user_gems_per_usd:.0f}** gems per doll
 user_winrate = st.sidebar.slider(label = 'Select game winrate (%):', min_value = 0, max_value = 100, value = 50, step = 1)/100.0
 st.sidebar.write(f'You win **{100 * ((user_winrate ** 2) + (2 * user_winrate * user_winrate * (1 - user_winrate))):.1f}%** of your Bo3s.')
 aggregate = st.sidebar.checkbox('Aggregate results with same payouts', value = True)
+show_default = st.sidebar.checkbox('Show default distribution', value = True)
 
 st.title("MTGA Cost Transparency Guide")
 st.write('Currently updating, check back later!')
@@ -57,8 +58,9 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
   df['usd_value'] += df['play_in_points'] * 200 / user_gems_per_usd
   fig, ax = plt.subplots(figsize = (8, 3))
-  ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b', line_width = 2, label = f'{user_winrate * 100:.0f}% wr')
-  ax.plot(default_df[[x_axis, '% of results']].set_index(x_axis), 'o-g', line_width = 1, label = 'default')
+  ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b', linewidth = 2, label = f'{user_winrate * 100:.0f}% wr')
+  if show_default:
+      ax.plot(default_df[[x_axis, '% of results']].set_index(x_axis), 'o-g', linewidth = 1, label = 'default')
   for x, y in zip(df[x_axis], df['% of results']):
     plt.text(x = x, y = y + 1, s = '{:.1f}%'.format(y), color = 'blue')
   ax.yaxis.set_major_formatter(mtick.PercentFormatter())
