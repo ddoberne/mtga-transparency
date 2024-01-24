@@ -48,7 +48,7 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, aggregate, user_gems
   df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
   fig, ax = plt.subplots()
   ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b')
-  plt.figure(figsize=(10,5))
+  plt.figure(figsize=(10,3))
   for x, y in zip(df[x_axis], df['% of results']):
     plt.text(x = x, y = y + .3, s = '{:.1f}%'.format(y), color = 'blue')
   ax.yaxis.set_major_formatter(mtick.PercentFormatter())
@@ -115,4 +115,4 @@ with on_demand_events:
       tab_info(tab_name, traditional_constructed, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost)
 
 with special_events:
-    pass
+    st.write('test')
