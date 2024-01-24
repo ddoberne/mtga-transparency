@@ -37,21 +37,28 @@ column_config = {'usd_value': st.column_config.NumberColumn(label = None, format
 def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost):
   st.header(f'{tab_name} prize distribution for a {user_winrate * 100:.0f}% winrate ({entry_cost} gem/${entry_cost/user_gems_per_usd:.2f} entry)')
   results = e.get_distributions(user_winrate, simplify_results = False)
+  default_results = e.get_distributions(.5, simplify_results = False)
   df = pd.DataFrame(results).transpose()
+  default_df = pd.DataFrame(default_results).transpose()
   x_axis = 'record'
   if aggregate:
     df = df.groupby('wins').sum()['distribution']
+    default_df = default_df.groupby('wins').sum()['distribution']
     x_axis = 'wins'
   df = df.reset_index()
+  default_df = default_df.reset_index()
   df = df.rename(columns = {'index':'record'})
+  default_df = default_df.rename(columns = {'index':'record'})
   df['% of results'] = df['distribution'] * 100
+  default_df['% of results'] = default_df['distribution'] * 100
   df['gem_payout'] = df['wins'].map(gem_prizes)
   df['pack_prizes'] = df['wins'].map(pack_prizes)
   df['play_in_points'] = df['wins'].map(play_in_points)
   df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
   df['usd_value'] += df['play_in_points'] * 200 / user_gems_per_usd
   fig, ax = plt.subplots(figsize = (8, 3))
-  ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b')
+  ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b', line_width = 2, label = f'{user_winrate * 100:.0f}% wr')
+  ax.plot(default_df[[x_axis, '% of results']].set_index(x_axis), 'o-g', line_width = 1, label = 'default')
   for x, y in zip(df[x_axis], df['% of results']):
     plt.text(x = x, y = y + 1, s = '{:.1f}%'.format(y), color = 'blue')
   ax.yaxis.set_major_formatter(mtick.PercentFormatter())
