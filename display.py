@@ -45,7 +45,7 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, aggregate, user_gems
   df['gem_payout'] = df['wins'].map(gem_prizes)
   df['pack_prizes'] = df['wins'].map(pack_prizes)
   df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
-  fig, ax = plt.subplots(figsize = (width, height))
+  fig, ax = plt.subplots(figsize = (3, 8))
   ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b')
   for x, y in zip(df[x_axis], df['% of results']):
     plt.text(x = x, y = y + .3, s = '{:.1f}%'.format(y), color = 'blue')
@@ -54,7 +54,7 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, aggregate, user_gems
   plt.ylabel('% of results')
   plt.xlabel(x_axis)
   st.pyplot(fig)
-  st.dataframe(df[[x_axis, '% of results', 'gem_payout', 'pack_prizes', 'usd_value']])
+  st.dataframe(df[[x_axis, '% of results', 'gem_payout', 'pack_prizes', 'usd_value']], hide_index = True, use_container_width = True)
   ev = 0
   pack_ev = 0
   for i in df.index:
@@ -70,8 +70,6 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, aggregate, user_gems
 
 summary = {}
 
-width = st.sidebar.slider("plot width", 1, 25, 3)
-height = st.sidebar.slider("plot height", 1, 25, 1)
 
 with tab_dict['Q. Draft']:
   tab_name = 'Quick Draft'
