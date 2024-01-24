@@ -34,7 +34,7 @@ for i in range(len(tabs)):
 column_config = {'usd_value': st.column_config.NumberColumn(label = None, format= "$ %.2f"),
                  '% of results': st.column_config.ProgressColumn(label = None, format = '%.1f', min_value = 0, max_value = 100)}
 
-def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost):
+def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost):
   st.header(f'{tab_name} prize distribution for a {user_winrate * 100:.0f}% winrate ({entry_cost} gem/${entry_cost/user_gems_per_usd:.2f} entry)')
   results = e.get_distributions(user_winrate, simplify_results = False)
   df = pd.DataFrame(results).transpose()
@@ -47,7 +47,9 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, aggregate, user_gems
   df['% of results'] = df['distribution'] * 100
   df['gem_payout'] = df['wins'].map(gem_prizes)
   df['pack_prizes'] = df['wins'].map(pack_prizes)
+  df['play_in_points'] = df['wins'].map(play_in_points)
   df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
+  df['usd_value'] += df['play_in_points'] * 200 / user_gems_per_usd
   fig, ax = plt.subplots(figsize = (8, 3))
   ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b')
   for x, y in zip(df[x_axis], df['% of results']):
@@ -57,13 +59,13 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, aggregate, user_gems
   plt.ylabel('% of results')
   plt.xlabel(x_axis)
   st.pyplot(fig)
-  st.dataframe(df[[x_axis, '% of results', 'gem_payout', 'pack_prizes', 'usd_value']], hide_index = True, use_container_width = True, column_config = column_config)
+  st.dataframe(df[[x_axis, '% of results', 'gem_payout', 'pack_prizes', 'play_in_points', 'usd_value']], hide_index = True, use_container_width = True, column_config = column_config)
   ev = 0
   pack_ev = 0
   for i in df.index:
-    ev += df.loc[i, 'distribution'] * df.loc[i, 'gem_payout']
+    ev += df.loc[i, 'distribution'] * (df.loc[i, 'gem_payout'] + (200 * df.loc[i, 'play_in_points']))
     pack_ev += df.loc[i, 'distribution'] * df.loc[i, 'pack_prizes']
-  st.write(f'The expected gem payout for this event given a {winrate * 100}% winrate is **{ev:.1f}** gems.')
+  st.write(f'The expected gem payout for this event given a {winrate * 100}% winrate is **{ev:.1f}** gems (including play-in points).')
   st.write(f'The expected pack payout is **{pack_ev:.1f}** packs.')
   if ev > entry_cost:
     st.write(f'That means an average **gain** of **{ev - entry_cost:.1f}** gems per event, or **{(ev - entry_cost) * 100.0/entry_cost:.1f}%**')
@@ -78,38 +80,43 @@ with tab_dict['Q. Draft']:
   tab_name = 'Quick Draft'
   gem_prizes = {0:50, 1:100, 2:200, 3:300, 4:450, 5:650, 6:850, 7:950}
   pack_prizes = {0:1.2, 1:1.22, 2:1.24, 3:1.26, 4:1.3, 5:1.35, 6:1.4, 7:2}
+  play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0}
   entry_cost = 750
   quick_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
-  tab_info(tab_name, quick_draft, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost)
+  tab_info(tab_name, quick_draft, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
 
 with tab_dict['Tr. Draft']:
   tab_name = 'Traditional Draft'
   gem_prizes = {0:100, 1:250, 2:1000, 3:2500}
   pack_prizes = {0:1, 1:1, 2:3, 3:6}
+  play_in_points = {0:1, 1:0, 2:0, 3:2}
   entry_cost = 1500
   traditional_draft = event.Event(rounds = 3, win_thresh = 3, loss_thresh = 3, bo1 = False)
-  tab_info(tab_name, traditional_draft, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost)
+  tab_info(tab_name, traditional_draft, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
 
 with tab_dict['Pr. Draft']:
   tab_name = 'Premier Draft'
   gem_prizes = {0:50, 1:100, 2:250, 3:1000, 4:1400, 5:1600, 6:1800, 7:2200}
   pack_prizes = {0:1, 1:1, 2:2, 3:2, 4:3, 5:4, 6:5, 7:6}
+  play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0}
   entry_cost = 1500
   premier_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
-  tab_info(tab_name, premier_draft, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost)
+  tab_info(tab_name, premier_draft, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
 
 with tab_dict['Bo1 Constr.']:
   tab_name = 'Bo1 Constructed'
   gem_prizes = {0:25, 1:50, 2:75, 3:200, 4:300, 5:400, 6:450, 7:500}
   pack_prizes = {0:0, 1:0, 2:1, 3:1, 4:1, 5:2, 6:2, 7:3}
+  play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:3}
   entry_cost = 375
   constructed_event = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
-  tab_info(tab_name, constructed_event, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost)
+  tab_info(tab_name, constructed_event, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
 
 with tab_dict['Bo3 Constr.']:
   tab_name = 'Bo3 Constructed'
   gem_prizes = {0:50, 1:100, 2:150, 3:600, 4:800, 5:1000}
   pack_prizes = {0:1, 1:1, 2:2, 3:2, 4:2, 5:3}
+  play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:4}
   entry_cost = 750
   traditional_constructed = event.Event(rounds = 5, win_thresh = 5, loss_thresh = 5, bo1 = False)
-  tab_info(tab_name, traditional_constructed, user_winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost)
+  tab_info(tab_name, traditional_constructed, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
