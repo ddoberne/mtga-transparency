@@ -53,7 +53,7 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   fig, ax = plt.subplots(figsize = (8, 3))
   ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b')
   for x, y in zip(df[x_axis], df['% of results']):
-    plt.text(x = x, y = y + .3, s = '{:.1f}%'.format(y), color = 'blue')
+    plt.text(x = x, y = y + 1, s = '{:.1f}%'.format(y), color = 'blue')
   ax.yaxis.set_major_formatter(mtick.PercentFormatter())
   ax.set_ylim(0, df['% of results'].max() + 5)
   plt.ylabel('% of results')
