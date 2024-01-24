@@ -31,7 +31,7 @@ tab_dict = {}
 for i in range(len(tabs)):
   tab_dict[tab_names[i]] = tabs[i]
 
-column_config = {'usd_value': st.column_config.NumberColumn(label = None, format=”$ %d"),
+column_config = {'usd_value': st.column_config.NumberColumn(label = None, format= "$ %d"),
                  '% of results': st.column_config.ProgressColumn(label = None, format = '%f%', min_value = 0, max_value = 100)}
 
 def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost):
