@@ -31,6 +31,9 @@ tab_dict = {}
 for i in range(len(tabs)):
   tab_dict[tab_names[i]] = tabs[i]
 
+column_config = {'usd_value': st.column_config.NumberColumn(label = None, format=”$ %d"),
+                 '% of results': st.column_config.ProgressColumn(label = None, format = '%f%', min_value = 0, max_value = 100)}
+
 def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, aggregate, user_gems_per_usd, entry_cost):
   st.header(f'{tab_name} prize distribution for a {user_winrate * 100:.0f}% winrate')
   results = e.get_distributions(user_winrate, simplify_results = False)
@@ -45,7 +48,7 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, aggregate, user_gems
   df['gem_payout'] = df['wins'].map(gem_prizes)
   df['pack_prizes'] = df['wins'].map(pack_prizes)
   df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
-  fig, ax = plt.subplots(figsize = (3, 8))
+  fig, ax = plt.subplots(figsize = (8, 3))
   ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b')
   for x, y in zip(df[x_axis], df['% of results']):
     plt.text(x = x, y = y + .3, s = '{:.1f}%'.format(y), color = 'blue')
@@ -54,19 +57,19 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, aggregate, user_gems
   plt.ylabel('% of results')
   plt.xlabel(x_axis)
   st.pyplot(fig)
-  st.dataframe(df[[x_axis, '% of results', 'gem_payout', 'pack_prizes', 'usd_value']], hide_index = True, use_container_width = True)
+  st.dataframe(df[[x_axis, '% of results', 'gem_payout', 'pack_prizes', 'usd_value']], hide_index = True, use_container_width = True, column_config = column_config)
   ev = 0
   pack_ev = 0
   for i in df.index:
     ev += df.loc[i, 'distribution'] * df.loc[i, 'gem_payout']
     pack_ev += df.loc[i, 'distribution'] * df.loc[i, 'pack_prizes']
-  st.write(f'The expected gem payout for this event given a {winrate * 100}% winrate is {ev:.1f} gems.')
-  st.write(f'The expected pack payout is {pack_ev:.1f} packs.')
+  st.write(f'The expected gem payout for this event given a {winrate * 100}% winrate is **{ev:.1f}** gems.')
+  st.write(f'The expected pack payout is **{pack_ev:.1f}** packs.')
   if ev > entry_cost:
-    st.write(f'That means an average gain of {ev - entry_cost:.1f} gems per event, or {(ev - entry_cost) * 100.0/entry_cost:.1f}%')
+    st.write(f'That means an average **gain** of **{ev - entry_cost:.1f}** gems per event, or **{(ev - entry_cost) * 100.0/entry_cost:.1f}%**')
   else:
-    st.write(f'That means an average loss of {entry_cost - ev:.1f} gems per event, or {(entry_cost - ev) * 100.0/entry_cost:.1f}%')
-  st.write(f'This event converts {entry_cost-ev:.1f} gems to {pack_ev:.1f} packs, with an efficiency of {(entry_cost-ev)/pack_ev:.1f} gems per pack.')
+    st.write(f'That means an average **loss** of **{entry_cost - ev:.1f}** gems per event, or **{(entry_cost - ev) * 100.0/entry_cost:.1f}%**')
+  st.write(f'This event converts **{entry_cost-ev:.1f}** gems to **{pack_ev:.1f}** packs, with an efficiency of **{(entry_cost-ev)/pack_ev:.1f}** gems per pack.')
 
 summary = {}
 
