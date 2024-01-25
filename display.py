@@ -23,11 +23,13 @@ same_winrate = st.sidebar.checkbox('Use same winrate for constructed and limited
 if same_winrate:
     user_winrate = st.sidebar.slider(label = 'Select game winrate (%):', min_value = 0, max_value = 100, value = 50, step = 1)/100.0
     limited_winrate = user_winrate
+    st.sidebar.write(f'You win **{100 * ((user_winrate ** 2) + (2 * user_winrate * user_winrate * (1 - user_winrate))):.1f}%** of your Bo3s.')
 else:
     user_winrate = st.sidebar.slider(label = 'Select constructed game winrate (%):', min_value = 0, max_value = 100, value = 50, step = 1)/100.0
+    st.sidebar.write(f'You win **{100 * ((user_winrate ** 2) + (2 * user_winrate * user_winrate * (1 - user_winrate))):.1f}%** of your constructed Bo3s.')
     limited_winrate = st.sidebar.slider(label = 'Select limited game winrate (%):', min_value = 0, max_value = 100, value = 50, step = 1)/100.0
+    st.sidebar.write(f'You win **{100 * ((limited_winrate ** 2) + (2 * limited_winrate * limited_winrate * (1 - limited_winrate))):.1f}%** of your limited Bo3s.')
 
-st.sidebar.write(f'You win **{100 * ((user_winrate ** 2) + (2 * user_winrate * user_winrate * (1 - user_winrate))):.1f}%** of your Bo3s.')
 aggregate = st.sidebar.checkbox('Aggregate results with same payouts', value = True)
 show_default = st.sidebar.checkbox('Show default distribution', value = True)
 st.sidebar.write()
