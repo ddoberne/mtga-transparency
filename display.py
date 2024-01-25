@@ -61,11 +61,11 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   default_df = default_df.rename(columns = {'index':'record'})
   df['% of results'] = df['distribution'] * 100
   default_df['% of results'] = default_df['distribution'] * 100
-  df['gem_payout'] = df['wins'].map(gem_prizes)
-  df['pack_prizes'] = df['wins'].map(pack_prizes)
-  df['play_in_points'] = df['wins'].map(play_in_points)
-  df['usd_value'] = df['gem_payout'].apply(lambda x: x / user_gems_per_usd)
-  df['usd_value'] += df['play_in_points'] * 200 / user_gems_per_usd
+  df['gem payout'] = df['wins'].map(gem_prizes)
+  df['pack prizes'] = df['wins'].map(pack_prizes)
+  df['play in points'] = df['wins'].map(play_in_points)
+  df['usd value'] = df['gem payout'].apply(lambda x: x / user_gems_per_usd)
+  df['usd value'] += df['play in points'] * 200 / user_gems_per_usd
   fig, ax = plt.subplots(figsize = (8, 3))
   ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b', linewidth = 3, label = f'{user_winrate * 100:.0f}% wr')
   if show_default:
@@ -78,12 +78,12 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   plt.ylabel('% of results')
   plt.xlabel(x_axis)
   st.pyplot(fig)
-  st.dataframe(df[[x_axis, '% of results', 'gem_payout', 'pack_prizes', 'play_in_points', 'usd_value']], hide_index = True, use_container_width = True, column_config = column_config)
+  st.dataframe(df[[x_axis, '% of results', 'gem payout', 'pack prizes', 'play in points', 'usd value']], hide_index = True, use_container_width = True, column_config = column_config)
   ev = 0
   pack_ev = 0
   for i in df.index:
-    ev += df.loc[i, 'distribution'] * (df.loc[i, 'gem_payout'] + (200 * df.loc[i, 'play_in_points']))
-    pack_ev += df.loc[i, 'distribution'] * df.loc[i, 'pack_prizes']
+    ev += df.loc[i, 'distribution'] * (df.loc[i, 'gem payout'] + (200 * df.loc[i, 'play in points']))
+    pack_ev += df.loc[i, 'distribution'] * df.loc[i, 'pack prizes']
   st.write(f'The expected gem payout for this event given a {winrate * 100:.0f}% winrate is **{ev:.1f}** gems (including play-in points).')
   st.write(f'The expected pack payout is **{pack_ev:.1f}** packs.')
   rake = entry_cost - ev
@@ -92,7 +92,7 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   else:
     st.write(f'That means an average **loss** of **{rake:.1f}** gems (**${rake/user_gems_per_usd:.2f}**) per event, or **{(rake) * 100.0/entry_cost:.1f}%**')
     st.write(f'This event converts **{rake:.1f}** gems to **{pack_ev:.1f}** packs, with an efficiency of **{(rake)/pack_ev:.1f}** gems per pack.')
-  summary[tab_name] = {'entry_cost': entry_cost, 'gem ev': ev, '% loss': rake/entry_cost, 'usd loss': rake/entry_cost/user_gems_per_usd, 'pack ev': pack_ev, 'gems per pack': rake/pack_ev}
+  summary[tab_name] = {'entry cost': entry_cost, 'gem ev': ev, '% loss': rake/entry_cost, 'usd loss': rake/entry_cost/user_gems_per_usd, 'pack ev': pack_ev, 'gems per pack': rake/pack_ev}
 
 
 with tab_dict['Bo1 Constr.']:
@@ -146,6 +146,7 @@ if same_winrate:
     st.header(f'Summary of events for {user_winrate * 100:.0f}% winrate')
 else:
     st.header(f'Summary of events for {user_winrate * 100:.0f}% constructed and {limited_winrate * 100:.0f}% limited winrates')
-summary_df = pd.DataFrame(summary).transpose()
+summary_df = pd.DataFrame(summary).transpose().reset_index()
+summary_df = summary_df.rename({'index': 'event name'})
 summary_config = {}
 st.dataframe(data = summary_df, hide_index = True, use_container_width = True)
