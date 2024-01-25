@@ -17,8 +17,8 @@ for i in range(0, len(gem_bundle_prices)):
 
 user_bundle = st.sidebar.selectbox('Which bundle do you purchase?', gem_bundle_prices)
 user_gems_per_usd = gems_per_usd[user_bundle]
-st.sidebar.write(f'Your gems are worth **{user_gems_per_usd:.0f}** gems per dollar.')
-st.sidebar.write(f'Packs bought directly from the store cost 200 gems, or **${200/user_gems_per_usd:.2f}**')
+st.sidebar.write(f'Each dollar buys you **{user_gems_per_usd:.0f}** gems.')
+st.sidebar.write(f'Packs bought directly from the store cost 200 gems, or **${200/user_gems_per_usd:.2f}.**')
 same_winrate = st.sidebar.checkbox('Use same winrate for constructed and limited', value = True)
 if same_winrate:
     user_winrate = st.sidebar.slider(label = 'Select game winrate (%):', min_value = 0, max_value = 100, value = 50, step = 1)/100.0
@@ -96,8 +96,7 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   else:
     st.write(f'That means an average **loss** of **{rake:.1f}** gems (**${rake/user_gems_per_usd:.2f}**) per event, or **{(rake) * 100.0/entry_cost:.1f}%**')
     st.write(f'This event converts **{rake:.1f}** gems to **{pack_ev:.1f}** packs, with an efficiency of **{(rake)/pack_ev:.1f}** gems per pack.')
-  summary[tab_name] = {'entry cost': entry_cost, 'gem ev': ev, 'gem ev %': 100 * (1 - rake/entry_cost), 'usd loss per event': rake/user_gems_per_usd, 'pack ev': pack_ev, 'gems per pack': rake/pack_ev,
-                       'better value than store packs?': rake/pack_ev < 200}
+  summary[tab_name] = {'entry cost': entry_cost, 'gem ev': ev, 'gem ev %': 100 * (1 - rake/entry_cost), 'usd loss per event': rake/user_gems_per_usd, 'pack ev': pack_ev, 'gems per pack': rake/pack_ev}
 
 
 with tab_dict['Bo1 Constr.']:
