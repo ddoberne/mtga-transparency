@@ -29,9 +29,10 @@ else:
 st.sidebar.write(f'You win **{100 * ((user_winrate ** 2) + (2 * user_winrate * user_winrate * (1 - user_winrate))):.1f}%** of your Bo3s.')
 aggregate = st.sidebar.checkbox('Aggregate results with same payouts', value = True)
 show_default = st.sidebar.checkbox('Show default distribution', value = True)
+st.sidebar.write('Created by Dayv Doberne aka Sunyveil')
 
 st.title("MTGA Cost Transparency Guide")
-st.write('Currently updating, check back later!')
+#st.write('Currently updating, check back later!')
 
 tab_names = [ 'Bo1 Constr.', 'Bo3 Constr.', 'Q. Draft', 'Tr. Draft', 'Pr. Draft']#, 'Arena Open', 'Arena Open (Day 2 Only)', 'Metagame Challenge']
 tabs = st.tabs(tab_names)
@@ -147,6 +148,7 @@ if same_winrate:
 else:
     st.header(f'Summary of events for {user_winrate * 100:.0f}% constructed and {limited_winrate * 100:.0f}% limited winrates')
 summary_df = pd.DataFrame(summary).transpose().reset_index()
-summary_df = summary_df.rename({'index': 'event name'})
+summary_df = summary_df.rename(columns = {'index': 'event name'})
 summary_config = {}
 st.dataframe(data = summary_df, hide_index = True, use_container_width = True)
+st.write('(Click on column header to sort table)')
