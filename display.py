@@ -18,7 +18,14 @@ for i in range(0, len(gem_bundle_prices)):
 user_bundle = st.sidebar.selectbox('Which bundle do you purchase?', gem_bundle_prices)
 user_gems_per_usd = gems_per_usd[user_bundle]
 st.sidebar.write(f'Your gems are worth **{user_gems_per_usd:.0f}** gems per dollar.')
-user_winrate = st.sidebar.slider(label = 'Select game winrate (%):', min_value = 0, max_value = 100, value = 50, step = 1)/100.0
+same_winrate = st.sidebar.checkbox('Use same winrate for constructed and limited', value = True)
+if same_winrate:
+    user_winrate = st.sidebar.slider(label = 'Select game winrate (%):', min_value = 0, max_value = 100, value = 50, step = 1)/100.0
+    limited_winrate = user_winrate
+else:
+    user_winrate = st.sidebar.slider(label = 'Select constructed game winrate (%):', min_value = 0, max_value = 100, value = 50, step = 1)/100.0
+    limited_winrate = st.sidebar.slider(label = 'Select limited game winrate (%):', min_value = 0, max_value = 100, value = 50, step = 1)/100.0
+
 st.sidebar.write(f'You win **{100 * ((user_winrate ** 2) + (2 * user_winrate * user_winrate * (1 - user_winrate))):.1f}%** of your Bo3s.')
 aggregate = st.sidebar.checkbox('Aggregate results with same payouts', value = True)
 show_default = st.sidebar.checkbox('Show default distribution', value = True)
@@ -26,7 +33,7 @@ show_default = st.sidebar.checkbox('Show default distribution', value = True)
 st.title("MTGA Cost Transparency Guide")
 st.write('Currently updating, check back later!')
 
-tab_names = ['Q. Draft', 'Tr. Draft', 'Pr. Draft', 'Bo1 Constr.', 'Bo3 Constr.']#, 'Arena Open', 'Arena Open (Day 2 Only)', 'Metagame Challenge']
+tab_names = [ 'Bo1 Constr.', 'Bo3 Constr.', 'Q. Draft', 'Tr. Draft', 'Pr. Draft']#, 'Arena Open', 'Arena Open (Day 2 Only)', 'Metagame Challenge']
 tabs = st.tabs(tab_names)
 tab_dict = {}
 for i in range(len(tabs)):
@@ -88,6 +95,23 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   summary[tab_name] = {'entry_cost': entry_cost, 'gem ev': ev, '% loss': rake/entry_cost, 'usd loss': rake/entry_cost/user_gems_per_usd, 'pack ev': pack_ev, 'gems per pack': rake/pack_ev}
 
 
+with tab_dict['Bo1 Constr.']:
+  tab_name = 'Bo1 Constructed'
+  gem_prizes = {0:25, 1:50, 2:75, 3:200, 4:300, 5:400, 6:450, 7:500}
+  pack_prizes = {0:0, 1:0, 2:1, 3:1, 4:1, 5:2, 6:2, 7:3}
+  play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:3}
+  entry_cost = 375
+  constructed_event = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
+  tab_info(tab_name, constructed_event, limited_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
+
+with tab_dict['Bo3 Constr.']:
+  tab_name = 'Bo3 Constructed'
+  gem_prizes = {0:50, 1:100, 2:150, 3:600, 4:800, 5:1000}
+  pack_prizes = {0:1, 1:1, 2:2, 3:2, 4:2, 5:3}
+  play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:4}
+  entry_cost = 750
+  traditional_constructed = event.Event(rounds = 5, win_thresh = 5, loss_thresh = 5, bo1 = False)
+  tab_info(tab_name, traditional_constructed, limited_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
 
 with tab_dict['Q. Draft']:
   tab_name = 'Quick Draft'
@@ -116,23 +140,12 @@ with tab_dict['Pr. Draft']:
   premier_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
   tab_info(tab_name, premier_draft, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
 
-with tab_dict['Bo1 Constr.']:
-  tab_name = 'Bo1 Constructed'
-  gem_prizes = {0:25, 1:50, 2:75, 3:200, 4:300, 5:400, 6:450, 7:500}
-  pack_prizes = {0:0, 1:0, 2:1, 3:1, 4:1, 5:2, 6:2, 7:3}
-  play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:3}
-  entry_cost = 375
-  constructed_event = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
-  tab_info(tab_name, constructed_event, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
 
-with tab_dict['Bo3 Constr.']:
-  tab_name = 'Bo3 Constructed'
-  gem_prizes = {0:50, 1:100, 2:150, 3:600, 4:800, 5:1000}
-  pack_prizes = {0:1, 1:1, 2:2, 3:2, 4:2, 5:3}
-  play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:4}
-  entry_cost = 750
-  traditional_constructed = event.Event(rounds = 5, win_thresh = 5, loss_thresh = 5, bo1 = False)
-  tab_info(tab_name, traditional_constructed, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
-
-summary_df = pd.DataFrame(summary)
+st.divider()
+if same_winrate:
+    st.header(f'Summary of events for {user_winrate * 100:.0f}% winrate')
+else:
+    st.header(f'Summary of events for {user_winrate * 100:.0f}% constructed and {limited_winrate * 100:.0f}% limited winrates')
+summary_df = pd.DataFrame(summary).transpose()
+summary_config = {}
 st.dataframe(data = summary_df, hide_index = True, use_container_width = True)
