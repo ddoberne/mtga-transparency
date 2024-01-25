@@ -26,7 +26,7 @@ show_default = st.sidebar.checkbox('Show default distribution', value = True)
 st.title("MTGA Cost Transparency Guide")
 st.write('Currently updating, check back later!')
 
-tab_names = ['Q. Draft', 'Tr. Draft', 'Pr. Draft', 'Bo1 Constr.', 'Bo3 Constr.', 'Arena Open', 'Arena Open (Day 2 Only)', 'Metagame Challenge']
+tab_names = ['Q. Draft', 'Tr. Draft', 'Pr. Draft', 'Bo1 Constr.', 'Bo3 Constr.']#, 'Arena Open', 'Arena Open (Day 2 Only)', 'Metagame Challenge']
 tabs = st.tabs(tab_names)
 tab_dict = {}
 for i in range(len(tabs)):
@@ -34,6 +34,8 @@ for i in range(len(tabs)):
 
 column_config = {'usd_value': st.column_config.NumberColumn(label = None, format= "$ %.2f"),
                  '% of results': st.column_config.ProgressColumn(label = None, format = '%.1f', min_value = 0, max_value = 100)}
+
+summary = {}
 
 def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost):
   st.header(f'{tab_name} prize distribution for a {user_winrate * 100:.0f}% winrate ({entry_cost} gem/${entry_cost/user_gems_per_usd:.2f} entry)')
@@ -83,8 +85,8 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   else:
     st.write(f'That means an average **loss** of **{rake:.1f}** gems (**${rake/user_gems_per_usd:.2f}**) per event, or **{(rake) * 100.0/entry_cost:.1f}%**')
     st.write(f'This event converts **{rake:.1f}** gems to **{pack_ev:.1f}** packs, with an efficiency of **{(rake)/pack_ev:.1f}** gems per pack.')
+  summary[tab_name] = {'entry_cost': entry_cost, 'gem ev': ev, '% loss': rake/entry_cost, 'usd loss': rake/entry_cost/user_gems_per_usd, 'pack ev': pack_ev, 'gems per pack': rake/pack_ev}
 
-summary = {}
 
 
 with tab_dict['Q. Draft']:
@@ -131,3 +133,6 @@ with tab_dict['Bo3 Constr.']:
   entry_cost = 750
   traditional_constructed = event.Event(rounds = 5, win_thresh = 5, loss_thresh = 5, bo1 = False)
   tab_info(tab_name, traditional_constructed, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
+
+summary_df = pd.DataFrame(summary)
+st.dataframe(data = summary_df, hide_index = True, use_container_width = True)
