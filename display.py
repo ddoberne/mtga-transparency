@@ -29,7 +29,8 @@ else:
 st.sidebar.write(f'You win **{100 * ((user_winrate ** 2) + (2 * user_winrate * user_winrate * (1 - user_winrate))):.1f}%** of your Bo3s.')
 aggregate = st.sidebar.checkbox('Aggregate results with same payouts', value = True)
 show_default = st.sidebar.checkbox('Show default distribution', value = True)
-st.sidebar.write('Created by Dayv Doberne aka Sunyveil')
+st.sidebar.write()
+st.sidebar.write('[GitHub source](https://github.com/ddoberne/mtga-transparency)')
 
 st.title("MTGA Cost Transparency Guide")
 #st.write('Currently updating, check back later!')
@@ -152,6 +153,7 @@ summary_df = summary_df.rename(columns = {'index': 'event name'})
 summary_config = {'usd loss': st.column_config.NumberColumn(label = None, format= "$%.2f"),
                   'gem ev': st.column_config.NumberColumn(label = None, format = '%.1f'),
                   '% loss': st.column_config.NumberColumn(label = None, format = '%.1f%%'),
+                  'pack ev': st.column_config.NumberColumn(label = None, format = '%.1f'),
                   'gems per pack': st.column_config.NumberColumn(label = None, format = '%.1f')}
 st.dataframe(data = summary_df, hide_index = True, use_container_width = True, column_config = summary_config)
 st.write('(Click on column header to sort table)')
