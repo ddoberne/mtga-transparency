@@ -155,7 +155,7 @@ summary_df = pd.DataFrame(summary).transpose().reset_index()
 summary_df = summary_df.rename(columns = {'index': 'event name'})
 summary_config = {'usd loss per event': st.column_config.NumberColumn(label = None, format= "$%.2f"),
                   'gem ev': st.column_config.NumberColumn(label = None, format = '%.1f'),
-                  'gem ev %': st.column_config.ProgressColumn(label = None, format = '%.1f%%', min_value = 0, max_value = 100)),
+                  'gem ev %': st.column_config.ProgressColumn(label = None, format = '%.1f%%', min_value = 0, max_value = 100),
                   'pack ev': st.column_config.NumberColumn(label = None, format = '%.1f'),
                   'gems per pack': st.column_config.NumberColumn(label = None, format = '%.1f')}
 st.dataframe(data = summary_df, hide_index = True, use_container_width = True, column_config = summary_config)
