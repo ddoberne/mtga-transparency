@@ -18,6 +18,7 @@ for i in range(0, len(gem_bundle_prices)):
 user_bundle = st.sidebar.selectbox('Which bundle do you purchase?', gem_bundle_prices)
 user_gems_per_usd = gems_per_usd[user_bundle]
 st.sidebar.write(f'Your gems are worth **{user_gems_per_usd:.0f}** gems per dollar.')
+st.sidebar.write(f'Packs bought directly from the store cost 200 gems, or **{200/user_gems_per_usd:$.2f}**')
 same_winrate = st.sidebar.checkbox('Use same winrate for constructed and limited', value = True)
 if same_winrate:
     user_winrate = st.sidebar.slider(label = 'Select game winrate (%):', min_value = 0, max_value = 100, value = 50, step = 1)/100.0
@@ -47,7 +48,6 @@ column_config = {'usd value': st.column_config.NumberColumn(label = None, format
 summary = {}
 
 def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost):
-  st.header(f'{tab_name} prize distribution for a {user_winrate * 100:.0f}% winrate ({entry_cost} gem/${entry_cost/user_gems_per_usd:.2f} entry)')
   results = e.get_distributions(user_winrate, simplify_results = False)
   default_results = e.get_distributions(.5, simplify_results = False)
   df = pd.DataFrame(results).transpose()
@@ -79,6 +79,8 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   ax.set_ylim(0, df['% of results'].max() + 5)
   plt.ylabel('% of results')
   plt.xlabel(x_axis)
+  # Writing begins here
+  st.header(f'{tab_name} prize distribution for a {user_winrate * 100:.0f}% winrate ({entry_cost} gem/${entry_cost/user_gems_per_usd:.2f} entry)')
   st.pyplot(fig)
   st.dataframe(df[[x_axis, '% of results', 'gem payout', 'pack prizes', 'play in points', 'usd value']], hide_index = True, use_container_width = True, column_config = column_config)
   ev = 0
@@ -94,7 +96,8 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   else:
     st.write(f'That means an average **loss** of **{rake:.1f}** gems (**${rake/user_gems_per_usd:.2f}**) per event, or **{(rake) * 100.0/entry_cost:.1f}%**')
     st.write(f'This event converts **{rake:.1f}** gems to **{pack_ev:.1f}** packs, with an efficiency of **{(rake)/pack_ev:.1f}** gems per pack.')
-  summary[tab_name] = {'entry cost': entry_cost, 'gem ev': ev, '% loss': 100 * rake/entry_cost, 'usd loss': rake/user_gems_per_usd, 'pack ev': pack_ev, 'gems per pack': rake/pack_ev}
+  summary[tab_name] = {'entry cost': entry_cost, 'gem ev': ev, 'gem ev %': 100 * (1 - rake/entry_cost), 'usd loss per event': rake/user_gems_per_usd, 'pack ev': pack_ev, 'gems per pack': rake/pack_ev,
+                       'better value than store packs?': rake/pack_ev < 200}
 
 
 with tab_dict['Bo1 Constr.']:
@@ -150,9 +153,9 @@ else:
     st.header(f'Summary of events for {user_winrate * 100:.0f}% constructed and {limited_winrate * 100:.0f}% limited winrates')
 summary_df = pd.DataFrame(summary).transpose().reset_index()
 summary_df = summary_df.rename(columns = {'index': 'event name'})
-summary_config = {'usd loss': st.column_config.NumberColumn(label = None, format= "$%.2f"),
+summary_config = {'usd loss per event': st.column_config.NumberColumn(label = None, format= "$%.2f"),
                   'gem ev': st.column_config.NumberColumn(label = None, format = '%.1f'),
-                  '% loss': st.column_config.NumberColumn(label = None, format = '%.1f%%'),
+                  'gem ev %': st.column_config.ProgressColumn(label = None, format = '%.1f%%', min_value = 0, max_value = 100)),
                   'pack ev': st.column_config.NumberColumn(label = None, format = '%.1f'),
                   'gems per pack': st.column_config.NumberColumn(label = None, format = '%.1f')}
 st.dataframe(data = summary_df, hide_index = True, use_container_width = True, column_config = summary_config)
