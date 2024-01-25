@@ -40,8 +40,8 @@ tab_dict = {}
 for i in range(len(tabs)):
   tab_dict[tab_names[i]] = tabs[i]
 
-column_config = {'usd_value': st.column_config.NumberColumn(label = None, format= "$ %.2f"),
-                 '% of results': st.column_config.ProgressColumn(label = None, format = '%.1f', min_value = 0, max_value = 100)}
+column_config = {'usd value': st.column_config.NumberColumn(label = None, format= "$%.2f"),
+                 '% of results': st.column_config.ProgressColumn(label = None, format = '%.1f%%', min_value = 0, max_value = 100)}
 
 summary = {}
 
@@ -93,7 +93,7 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   else:
     st.write(f'That means an average **loss** of **{rake:.1f}** gems (**${rake/user_gems_per_usd:.2f}**) per event, or **{(rake) * 100.0/entry_cost:.1f}%**')
     st.write(f'This event converts **{rake:.1f}** gems to **{pack_ev:.1f}** packs, with an efficiency of **{(rake)/pack_ev:.1f}** gems per pack.')
-  summary[tab_name] = {'entry cost': entry_cost, 'gem ev': ev, '% loss': rake/entry_cost, 'usd loss': rake/entry_cost/user_gems_per_usd, 'pack ev': pack_ev, 'gems per pack': rake/pack_ev}
+  summary[tab_name] = {'entry cost': entry_cost, 'gem ev': ev, '% loss': 100 * rake/entry_cost, 'usd loss': rake/user_gems_per_usd, 'pack ev': pack_ev, 'gems per pack': rake/pack_ev}
 
 
 with tab_dict['Bo1 Constr.']:
@@ -149,6 +149,9 @@ else:
     st.header(f'Summary of events for {user_winrate * 100:.0f}% constructed and {limited_winrate * 100:.0f}% limited winrates')
 summary_df = pd.DataFrame(summary).transpose().reset_index()
 summary_df = summary_df.rename(columns = {'index': 'event name'})
-summary_config = {}
-st.dataframe(data = summary_df, hide_index = True, use_container_width = True)
+summary_config = {'usd loss': st.column_config.NumberColumn(label = None, format= "$%.2f"),
+                  'gem ev': st.column_config.NumberColumn(label = None, format = '%.1f'),
+                  '% loss': st.column_config.NumberColumn(label = None, format = '%.1f%%'),
+                  'gems per pack': st.column_config.NumberColumn(label = None, format = '%.1f')}
+st.dataframe(data = summary_df, hide_index = True, use_container_width = True, column_config = summary_config)
 st.write('(Click on column header to sort table)')
