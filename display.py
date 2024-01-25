@@ -18,7 +18,7 @@ for i in range(0, len(gem_bundle_prices)):
 user_bundle = st.sidebar.selectbox('Which bundle do you purchase?', gem_bundle_prices)
 user_gems_per_usd = gems_per_usd[user_bundle]
 st.sidebar.write(f'Each dollar buys you **{user_gems_per_usd:.0f}** gems.')
-st.sidebar.write(f'Packs bought directly from the store cost 200 gems, or **${200/user_gems_per_usd:.2f}.**')
+st.sidebar.write(f'Packs bought directly from the store cost 200 gems, or **${200/user_gems_per_usd:.2f}**. This is also the value of **1000 coins**. Daily quest rewards max out around 1250-1500 coins.')
 same_winrate = st.sidebar.checkbox('Use same winrate for constructed and limited', value = True)
 if same_winrate:
     user_winrate = st.sidebar.slider(label = 'Select game winrate (%):', min_value = 0, max_value = 100, value = 50, step = 1)/100.0
