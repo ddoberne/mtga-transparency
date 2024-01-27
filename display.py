@@ -67,7 +67,7 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   default_df['% of results'] = default_df['distribution'] * 100
   df['gem payout'] = df['wins'].map(gem_prizes)
   if coin_payout:
-      df['gem_payout'] = df['gem_payout']/50
+      df['gem payout'] = df['gem payout']/50
   df['pack prizes'] = df['wins'].map(pack_prizes)
   df['play in points'] = df['wins'].map(play_in_points)
   df['usd value'] = df['gem payout'].apply(lambda x: x / user_gems_per_usd)
