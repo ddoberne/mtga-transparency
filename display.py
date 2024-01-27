@@ -156,7 +156,7 @@ with tab_dict['Metagame Challenge']:
     gem_prizes = {0:500, 1:1000, 2:1500, 3:2000, 4:2500, 5:3000, 6:4000, 7:5000}
     pack_prizes = {0:0, 1:0, 2:1, 3:3, 4:5, 5:10, 6:20, 7:30}
     play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0}
-    entry_cost = 4000
+    entry_cost = 400
     metagame_challenge = event.Event(rounds = 7, win_thresh = 7, loss_thresh = 1, bo1 = False)
     tab_info(tab_name, metagame_challenge, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost, coin_payout = True)
 
