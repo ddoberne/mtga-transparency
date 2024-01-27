@@ -50,7 +50,7 @@ column_config = {'usd value': st.column_config.NumberColumn(label = None, format
 summary = {}
 
 def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost, coin_payout = False, results_only = False):
-  results = e.get_distributions(user_winrate, simplify_results = False)
+  results = e.get_distributions(winrate, simplify_results = False)
   default_results = e.get_distributions(.5, simplify_results = False)
   df = pd.DataFrame(results).transpose()
   default_df = pd.DataFrame(default_results).transpose()
