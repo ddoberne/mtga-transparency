@@ -170,7 +170,7 @@ with tab_dict['Sealed']:
     tab_info(tab_name, sealed, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
 
 
-with tab_dict['Sealed']:
+with tab_dict['Tr. Sealed']:
     tab_name = 'Sealed
     gem_prizes = {0:200, 1:500, 2:1200, 3:1800, 4:2200}
     pack_prizes = {0:3, 1:3, 2:3, 3:3, 4:3}
