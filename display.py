@@ -38,7 +38,7 @@ st.sidebar.write('[GitHub source](https://github.com/ddoberne/mtga-transparency)
 st.title("MTGA Cost Transparency Guide")
 #st.write('Currently updating, check back later!')
 
-tab_names = [ 'Bo1 Constr.', 'Bo3 Constr.', 'Q. Draft', 'Tr. Draft', 'Pr. Draft', 'Metagame Challenge']#, 'Arena Open', 'Arena Open (Day 2 Only)', 'Metagame Challenge']
+tab_names = [ 'Bo1 Constr.', 'Bo3 Constr.', 'Q. Draft', 'Tr. Draft', 'Pr. Draft', 'Metagame Challenge', 'Sealed', 'Tr. Sealed']#, 'Arena Open', 'Arena Open (Day 2 Only)', 'Metagame Challenge']
 tabs = st.tabs(tab_names)
 tab_dict = {}
 for i in range(len(tabs)):
@@ -159,6 +159,25 @@ with tab_dict['Metagame Challenge']:
     entry_cost = 400
     metagame_challenge = event.Event(rounds = 7, win_thresh = 7, loss_thresh = 1, bo1 = False)
     tab_info(tab_name, metagame_challenge, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost, coin_payout = True)
+
+with tab_dict['Sealed']:
+    tab_name = 'Sealed'
+    gem_prizes = {0:200, 1:400, 2:600, 3:1200, 4:1400, 5:1600, 6:2000, 7:2200}
+    pack_prizes = {0:3, 1:3, 2:3, 3:3, 4:3, 5:3, 6:3, 7:3}
+    play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0}
+    entry_cost = 2000
+    metagame_challenge = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
+    tab_info(tab_name, sealed, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
+
+
+with tab_dict['Sealed']:
+    tab_name = 'Sealed
+    gem_prizes = {0:200, 1:500, 2:1200, 3:1800, 4:2200}
+    pack_prizes = {0:3, 1:3, 2:3, 3:3, 4:3}
+    play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0}
+    entry_cost = 2000
+    metagame_challenge = event.Event(rounds = 5, win_thresh = 4, loss_thresh = 2, bo1 = True)
+    tab_info(tab_name, sealed, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
 
 st.divider()
 if same_winrate:
