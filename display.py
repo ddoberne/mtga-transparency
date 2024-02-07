@@ -166,18 +166,18 @@ with tab_dict['Sealed']:
     pack_prizes = {0:3, 1:3, 2:3, 3:3, 4:3, 5:3, 6:3, 7:3}
     play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0}
     entry_cost = 2000
-    metagame_challenge = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
+    sealed = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
     tab_info(tab_name, sealed, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
 
 
 with tab_dict['Tr. Sealed']:
-    tab_name = 'Sealed
+    tab_name = 'Tr. Sealed'
     gem_prizes = {0:200, 1:500, 2:1200, 3:1800, 4:2200}
     pack_prizes = {0:3, 1:3, 2:3, 3:3, 4:3}
     play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0}
     entry_cost = 2000
-    metagame_challenge = event.Event(rounds = 5, win_thresh = 4, loss_thresh = 2, bo1 = True)
-    tab_info(tab_name, sealed, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
+    traditional_sealed = event.Event(rounds = 5, win_thresh = 4, loss_thresh = 2, bo1 = True)
+    tab_info(tab_name, traditional_sealed, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
 
 st.divider()
 if same_winrate:
