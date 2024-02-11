@@ -45,7 +45,7 @@ current_events.append('Pr. Draft')
 current_events.append('Sealed')
 current_events.append('Tr. Sealed')
 current_events.append('Bo1 Qual. (L)')
-tab_names = st.sidebar.mulitselect('Select events to compare:', options = all_events, default = current_events)
+tab_names = st.sidebar.multiselect('Select events to compare:', options = all_events, default = current_events)
 
 st.sidebar.write()
 st.sidebar.write('[GitHub source](https://github.com/ddoberne/mtga-transparency)')
