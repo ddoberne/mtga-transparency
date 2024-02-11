@@ -33,25 +33,26 @@ else:
 
 aggregate = st.sidebar.checkbox('Aggregate results with same payouts', value = True)
 show_default = st.sidebar.checkbox('Show default distribution', value = True)
+
+all_events = [ 'Bo1 Constr.', 'Bo3 Constr.', 'Q. Draft', 'Tr. Draft', 'Pr. Draft', 'Meta Challenge', 'Sealed', 'Tr. Sealed', 'Bo1 Qual. (L)']#, 'Arena Open', 'Arena Open (Day 2 Only)']
+current_events = []
+current_events.append('Bo1 Constr.')
+current_events.append('Bo3 Constr.')
+#current_events.append('Q. Draft')
+current_events.append('Tr. Draft')
+current_events.append('Pr. Draft')
+#current_events.append('Meta Challenge')
+current_events.append('Sealed')
+current_events.append('Tr. Sealed')
+current_events.append('Bo1 Qual. (L)')
+tab_names = st.sidebar.mulitselect('Select events to compare:', options = all_events, default = current_events)
+
 st.sidebar.write()
 st.sidebar.write('[GitHub source](https://github.com/ddoberne/mtga-transparency)')
 
 st.title("MTGA Cost Transparency Guide")
-st.write('Currently updating, check back later!')
+#st.write('Currently updating, check back later!')
 
-tab_names = []
-tab_names.append('Bo1 Constr.')
-tab_names.append('Bo3 Constr.')
-#tab_names.append('Q. Draft')
-tab_names.append('Tr. Draft')
-tab_names.append('Pr. Draft')
-#tab_names.append('Meta Challenge')
-tab_names.append('Sealed')
-tab_names.append('Tr. Sealed')
-tab_names.append('Bo1 Qual. (L)')
-
-
-#tab_names = [ 'Bo1 Constr.', 'Bo3 Constr.', 'Q. Draft', 'Tr. Draft', 'Pr. Draft', 'Meta Challenge', 'Sealed', 'Tr. Sealed']#, 'Arena Open', 'Arena Open (Day 2 Only)', 'Metagame Challenge']
 tabs = st.tabs(tab_names)
 tab_dict = {}
 for i in range(len(tabs)):
