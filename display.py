@@ -37,7 +37,7 @@ st.sidebar.write()
 st.sidebar.write('[GitHub source](https://github.com/ddoberne/mtga-transparency)')
 
 st.title("MTGA Cost Transparency Guide")
-#st.write('Currently updating, check back later!')
+st.write('Currently updating, check back later!')
 
 tab_names = []
 tab_names.append('Bo1 Constr.')
