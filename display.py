@@ -116,7 +116,11 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
     st.write(f'That means an average **gain** of **{- rake:.1f}** gems (**${-rake/user_gems_per_usd:.2f}**) per event, or **{(- rake) * 100.0/entry_cost:.1f}%**')
   else:
     st.write(f'That means an average **loss** of **{rake:.1f}** gems (**${rake/user_gems_per_usd:.2f}**) per event, or **{(rake) * 100.0/entry_cost:.1f}%**')
-    st.write(f'This event converts **{rake:.1f}** gems to **{pack_ev:.1f}** packs, with an efficiency of **{(rake)/pack_ev:.1f}** gems per pack.')
+    if pack_ev == 0:
+        efficiency = 0
+    else:
+        efficiency = rake/pack_ev
+    st.write(f'This event converts **{rake:.1f}** gems to **{pack_ev:.1f}** packs, with an efficiency of **{efficiency:.1f}** gems per pack.')
 
 for tab_name in tab_names:
     with tab_dict[tab_name]:
