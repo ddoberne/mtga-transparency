@@ -5,6 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import seaborn as sns
+import events
 
 
 sns.set_theme()
@@ -38,7 +39,19 @@ st.sidebar.write('[GitHub source](https://github.com/ddoberne/mtga-transparency)
 st.title("MTGA Cost Transparency Guide")
 #st.write('Currently updating, check back later!')
 
-tab_names = [ 'Bo1 Constr.', 'Bo3 Constr.', 'Q. Draft', 'Tr. Draft', 'Pr. Draft', 'Metagame Challenge', 'Sealed', 'Tr. Sealed']#, 'Arena Open', 'Arena Open (Day 2 Only)', 'Metagame Challenge']
+tab_names = []
+tab_names.append('Bo1 Constr.')
+tab_names.append('Bo3 Constr.')
+#tab_names.append('Q. Draft')
+tab_names.append('Tr. Draft')
+tab_names.append('Pr. Draft')
+#tab_names.append('Meta Challenge')
+tab_names.append('Sealed')
+tab_names.append('Tr. Sealed')
+tab_names.append('Bo1 Qual. (L)')
+
+
+#tab_names = [ 'Bo1 Constr.', 'Bo3 Constr.', 'Q. Draft', 'Tr. Draft', 'Pr. Draft', 'Meta Challenge', 'Sealed', 'Tr. Sealed']#, 'Arena Open', 'Arena Open (Day 2 Only)', 'Metagame Challenge']
 tabs = st.tabs(tab_names)
 tab_dict = {}
 for i in range(len(tabs)):
@@ -104,15 +117,37 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
     st.write(f'That means an average **loss** of **{rake:.1f}** gems (**${rake/user_gems_per_usd:.2f}**) per event, or **{(rake) * 100.0/entry_cost:.1f}%**')
     st.write(f'This event converts **{rake:.1f}** gems to **{pack_ev:.1f}** packs, with an efficiency of **{(rake)/pack_ev:.1f}** gems per pack.')
 
+for tab_name in tab_names:
+    with tab_dict[events.tab_name_d[tab_name]]:
+      gem_prizes = events.gem_prize_d[tab_name]
+      pack_prizes = events.pack_prize_d[tab_name]
+      play_in_points = events.play_in_point_d[tab_name]
+      entry_cost = events.entry_d[tab_name]
+      coin_payout = events.coin_payout_d[tab_name]
+      event_object = event.Event(rounds = events.round_d[tab_name], win_thresh = events.win_thresh_d[tab_name], loss_thresh = events.loss_thresh_d[tab_name],
+                                 bo1 = events.bo1_d[tab_name])
+      if events.event_category_d[tab_name] == 'constructed':
+          winrate = user_winrate
+      else:
+          winrate = limited_winrate
+      tab_info(tab_name, event_object, winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost, events.coin_payout_d[tab_name])
 
-with tab_dict['Bo1 Constr.']:
-  tab_name = 'Bo1 Constructed'
-  gem_prizes = {0:25, 1:50, 2:75, 3:200, 4:300, 5:400, 6:450, 7:500}
-  pack_prizes = {0:0, 1:0, 2:1, 3:1, 4:1, 5:2, 6:2, 7:3}
-  play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:3}
-  entry_cost = 375
-  constructed_event = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
-  tab_info(tab_name, constructed_event, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
+
+
+
+"""
+
+if tab_name in tab_names:
+    with tab_dict['Bo1 Constr.']:
+      tab_name = 'Bo1 Constructed'
+      gem_prizes = {0:25, 1:50, 2:75, 3:200, 4:300, 5:400, 6:450, 7:500}
+      pack_prizes = {0:0, 1:0, 2:1, 3:1, 4:1, 5:2, 6:2, 7:3}
+      play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:3}
+      entry_cost = 375
+      constructed_event = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
+      tab_info(tab_name, constructed_event, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
+
+
 
 with tab_dict['Bo3 Constr.']:
   tab_name = 'Bo3 Constructed'
@@ -178,6 +213,8 @@ with tab_dict['Tr. Sealed']:
     entry_cost = 2000
     traditional_sealed = event.Event(rounds = 5, win_thresh = 4, loss_thresh = 2, bo1 = True)
     tab_info(tab_name, traditional_sealed, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
+
+"""
 
 st.divider()
 if same_winrate:
