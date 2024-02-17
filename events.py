@@ -151,7 +151,7 @@ populate(name, tab_name, gem_prizes, pack_prizes, play_in_points, entry_cost, ro
 
 name = 'Bo3 Qual. (L)'
 tab_name = 'Bo3 Qualifier Play-In (Limited)'
-gem_prizes = {0:500 , 1:2000 , 2:4500, 3:6000}
+gem_prizes = {0:500 , 1:2000 , 2:4500, 3:6000, 4:6000}
 pack_prizes = {0:0, 1:0, 2:0, 3:0, 4:0}
 play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0}
 entry_cost = 4000
