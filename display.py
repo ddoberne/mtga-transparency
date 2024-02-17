@@ -34,7 +34,7 @@ else:
 aggregate = st.sidebar.checkbox('Aggregate results with same payouts', value = True)
 show_default = st.sidebar.checkbox('Show default distribution', value = True)
 
-all_events = [ 'Bo1 Constr.', 'Bo3 Constr.', 'Q. Draft', 'Tr. Draft', 'Pr. Draft', 'Meta Challenge', 'Sealed', 'Tr. Sealed', 'Bo1 Qual. (L)']#, 'Arena Open', 'Arena Open (Day 2 Only)']
+all_events = [ 'Bo1 Constr.', 'Bo3 Constr.', 'Q. Draft', 'Tr. Draft', 'Pr. Draft', 'Meta Challenge', 'Sealed', 'Tr. Sealed', 'Bo1 Qual. (L)', 'Bo3 Qual. (L)']#, 'Arena Open', 'Arena Open (Day 2 Only)']
 current_events = []
 current_events.append('Bo1 Constr.')
 current_events.append('Bo3 Constr.')
@@ -44,7 +44,9 @@ current_events.append('Pr. Draft')
 #current_events.append('Meta Challenge')
 current_events.append('Sealed')
 current_events.append('Tr. Sealed')
-current_events.append('Bo1 Qual. (L)')
+#current_events.append('Bo1 Qual. (L)')
+current_events.append('Bo3 Qual. (L)')
+
 tab_names = st.sidebar.multiselect('Select events to compare:', options = all_events, default = current_events)
 
 st.sidebar.write()
