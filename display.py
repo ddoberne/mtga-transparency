@@ -9,17 +9,26 @@ import events
 
 
 sns.set_theme()
+st.set_page_config(layout="wide")
+local_tax = st.sidebar.number_input(label = 'Local tax rate in %', value = 0.0, step = 1.0)
 
-gem_bundle_prices = ("$4.99", "$9.99", "$19.99", "$49.99", "$99.99")
-gem_bundle_values = (750.0/5, 1600.0/10, 3400.0/20, 9200.0/50, 20000.0/100)
+gem_bundle_prices_f = [round(x * (1 + local_tax / 100), 2) for x in (4.99, 9.99, 19.99, 49.99, 99.99)]
+gem_bundle_index = {}
+gem_bundle_prices_str = ["" for x in range(len(gem_bundle_prices_f))]
+gem_bundle_count = (750, 1600, 3400, 9200, 20000)
+gem_bundle_values = [0.0 for x in range(len(gem_bundle_prices_f))]
 gems_per_usd = {}
-for i in range(0, len(gem_bundle_prices)):
-  gems_per_usd[gem_bundle_prices[i]] = gem_bundle_values[i]
+for i in range(0, len(gem_bundle_prices_f)):
+  gem_bundle_values[i] = gem_bundle_count[i]/gem_bundle_prices_f[i]
+  gem_bundle_prices_str[i] = "$" + str(gem_bundle_prices_f[i]) + " → " + str(gem_bundle_count[i]) + "💎"
+  gems_per_usd[gem_bundle_prices_str[i]] = gem_bundle_values[i]
+  gem_bundle_index[gem_bundle_prices_str[i]] = i
 
-user_bundle = st.sidebar.selectbox('Which bundle do you purchase?', gem_bundle_prices)
+user_bundle = st.sidebar.selectbox('Which bundle do you purchase?', gem_bundle_prices_str)
+
 user_gems_per_usd = gems_per_usd[user_bundle]
-st.sidebar.write(f'Each dollar buys you **{user_gems_per_usd:.0f}** gems.')
-st.sidebar.write(f'Packs bought directly from the store cost 200 gems, or **${200/user_gems_per_usd:.2f}**. This is also the value of **1000 coins**.')
+
+st.sidebar.write(f'Each dollar buys you **{user_gems_per_usd:.0f}** 💎 which buys {user_gems_per_usd/200:.2f} packs in the store.')
 same_winrate = st.sidebar.checkbox('Use same winrate for constructed and limited', value = True)
 if same_winrate:
     user_winrate = st.sidebar.slider(label = 'Select game winrate (%):', min_value = 0, max_value = 100, value = 50, step = 1)/100.0
@@ -31,27 +40,48 @@ else:
     limited_winrate = st.sidebar.slider(label = 'Select limited game winrate (%):', min_value = 0, max_value = 100, value = 50, step = 1)/100.0
     st.sidebar.write(f'You win **{100 * ((limited_winrate ** 2) + (2 * limited_winrate * limited_winrate * (1 - limited_winrate))):.1f}%** of your limited Bo3s.')
 
+value_pack_reward = st.sidebar.number_input(label = 'Perceived 💎 value of a pack:', min_value = 0, value = 100, step = 1)
+st.sidebar.write(f'You value every pack at $**{value_pack_reward/user_gems_per_usd:.2f}**')
+value_pack_draft = st.sidebar.number_input(label = 'Perceived 💎 value of a draft/sealed pack:', min_value = 0, value = 50, step = 1)
+st.sidebar.write(f'You value every draft pack at $**{value_pack_draft/user_gems_per_usd:.2f}**')
+value_play_in_point = st.sidebar.number_input(label = 'Perceived 💎 value of a play in point:', min_value = 0, value = 100, step = 1)
+st.sidebar.write(f'You value every play in point at $**{value_play_in_point/user_gems_per_usd:.2f}**')
+
+value_gold = st.sidebar.number_input(label = 'Perceived 💎 value of a single rewarded 🪙:', min_value = 0.0, value = 0.15, step = 0.01)
+st.sidebar.write(f'You value 100 🪙 at $**{100 * value_gold/user_gems_per_usd:.2f}**')
+
+
+
 aggregate = st.sidebar.checkbox('Aggregate results with same payouts', value = True)
 show_default = st.sidebar.checkbox('Show default distribution', value = True)
 
-all_events = [ 'Bo1 Constr.', 'Bo3 Constr.', 'Q. Draft', 'Tr. Draft', 'Pr. Draft', 'Meta Challenge', 'Sealed', 'Tr. Sealed', 'Bo1 Qual. (L)', 'Bo3 Qual. (L)']#, 'Arena Open', 'Arena Open (Day 2 Only)']
+all_events = [ 'Bo1 Constr.', 'Bo3 Constr.', 'Q. Draft', 'Tr. Draft', 'Pr. Draft', 'Pick 2 Draft', 'Meta Challenge', 'Sealed', 'Tr. Sealed', 'Bo1 Qual. (L)', 'Bo3 Qual. (L)', 'Cube', 'Tr. Cube', 'Direct Draft']#, 'Arena Open', 'Arena Open (Day 2 Only)']
 current_events = []
 current_events.append('Bo1 Constr.')
 current_events.append('Bo3 Constr.')
-#current_events.append('Q. Draft')
+current_events.append('Q. Draft')
 current_events.append('Tr. Draft')
 current_events.append('Pr. Draft')
+current_events.append('Pick 2 Draft')
+
 #current_events.append('Meta Challenge')
 current_events.append('Sealed')
 current_events.append('Tr. Sealed')
 #current_events.append('Bo1 Qual. (L)')
-current_events.append('Bo3 Qual. (L)')
+#current_events.append('Bo3 Qual. (L)')
 
 tab_names = st.sidebar.multiselect('Select events to compare:', options = all_events, default = current_events)
 
+value_box = 0
+if 'Direct Draft' in tab_names:
+    value_box = st.sidebar.number_input(label='Perceived 💎 value of a play booster box:', min_value=0, value=20000, step=1)
+    st.sidebar.write(f'You value a play booster box at $**{value_box / user_gems_per_usd:.2f}**')
+
+
 st.sidebar.write()
 st.sidebar.write('[GitHub source](https://github.com/ddoberne/mtga-transparency)')
-
+st.sidebar.write()
+st.sidebar.caption('This calculator assumes that your winrate does **not** change based on your event record, potentially causing overestimation of top-heavy event payouts.')
 st.title("MTGA Cost Transparency Guide")
 #st.write('Currently updating, check back later!')
 
@@ -61,18 +91,22 @@ for i in range(len(tabs)):
   tab_dict[tab_names[i]] = tabs[i]
 
 column_config = {'usd value': st.column_config.NumberColumn(label = None, format= "$%.2f"),
+                 'games played': st.column_config.NumberColumn(label = "games played Ø", format= "%.2f"),
                  '% of results': st.column_config.ProgressColumn(label = None, format = '%.1f%%', min_value = 0, max_value = 100)}
 
 summary = {}
 
-def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost, coin_payout = False, results_only = False):
+def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, box_prices, play_in_points, aggregate, user_gems_per_usd, entry_cost, entry_cost_gold, packs_draft, packs_sealed, coin_payout = False, results_only = False):
   results = e.get_distributions(winrate, simplify_results = False)
   default_results = e.get_distributions(.5, simplify_results = False)
   df = pd.DataFrame(results).transpose()
   default_df = pd.DataFrame(default_results).transpose()
   x_axis = 'record'
   if aggregate:
-    df = df.groupby('wins').sum()['distribution']
+    df['games played'] = df['games played'] * df['distribution']
+    df = df.groupby('wins').sum()
+    df['games played'] = (df['games played'] / df['distribution'].where(df['distribution'] != 0))
+    df = df[['distribution','games played']]
     default_df = default_df.groupby('wins').sum()['distribution']
     x_axis = 'wins'
   df = df.reset_index()
@@ -82,25 +116,65 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   df['% of results'] = df['distribution'] * 100
   default_df['% of results'] = default_df['distribution'] * 100
   df['gem payout'] = df['wins'].map(gem_prizes)
-  if coin_payout:
-      df['gem payout'] = df['gem payout']/50
   df['pack prizes'] = df['wins'].map(pack_prizes)
+  df['box prices'] = df['wins'].map(box_prices)
   df['play in points'] = df['wins'].map(play_in_points)
   df['usd value'] = df['gem payout'].apply(lambda x: x / user_gems_per_usd)
   df['usd value'] += df['play in points'] * 200 / user_gems_per_usd
+  df['usd value'] += df['box prices'] * 125
   ev = 0
   pack_ev = 0
+  ev_value = 0
+  ev_play_in = 0
+  ev_gold = 0
+  ev_box = 0
+  ev_played = (df['games played'] * df['distribution']).sum()
   for i in df.index:
-    ev += df.loc[i, 'distribution'] * (df.loc[i, 'gem payout'] + (200 * df.loc[i, 'play in points']))
+    if not coin_payout:
+        ev += df.loc[i, 'distribution'] * (df.loc[i, 'gem payout'])
+    else:
+        ev_gold += df.loc[i, 'distribution'] * (df.loc[i, 'gem payout'])
     pack_ev += df.loc[i, 'distribution'] * df.loc[i, 'pack prizes']
+    ev_play_in += df.loc[i, 'distribution'] * df.loc[i, 'play in points']
+    ev_box += df.loc[i, 'distribution'] * df.loc[i, 'box prices']
+  ev_value += pack_ev * value_pack_reward
+  ev_value += packs_draft * value_pack_draft
+  ev_value += packs_sealed * value_pack_draft
+  ev_value += ev_play_in * value_play_in_point
+  ev_value += ev_gold * value_gold
+  ev_value += ev_box * value_box
+  ev_value += ev
+
+  if coin_payout:
+      df['gem payout'] = 0
   rake = entry_cost - ev
-  summary[tab_name] = {'entry cost': entry_cost, 'gem ev': ev, 'gem ev %': 100 * (1 - rake/entry_cost), 'usd loss per event': rake/user_gems_per_usd, 'pack ev': pack_ev, 'gems per pack': rake/pack_ev}
+  gems_per_gold = ev/entry_cost_gold if entry_cost_gold > 0 and not coin_payout else np.nan
+  gems_per_pack = rake/pack_ev if pack_ev > 0 else np.nan
+  gold_per_pack = (entry_cost_gold - ev_gold) / pack_ev if pack_ev > 0 and entry_cost_gold > 0 else np.nan
+  gem_cost_per_game = rake / ev_played
+  summary[tab_name] = {'entry 🪙': entry_cost_gold if entry_cost_gold > 0 else np.nan,
+                       'entry 💎': entry_cost,
+                       '💎 return': ev,
+                       '💎 return %': 100 * (1 - rake/entry_cost),
+                       '💎 value': ev_value,
+                       '💎 value %': 100 * (1 - (entry_cost - ev_value)/entry_cost),
+                       '💎 loss in $': rake/user_gems_per_usd,
+                       'value loss in $': (entry_cost - ev_value)/user_gems_per_usd,
+                       'pack ev': pack_ev,
+                       '💎 per pack': gems_per_pack,
+                       '🪙 per pack': gold_per_pack,
+                       '💎 per 🪙': gems_per_gold,
+                       'box ev': ev_box,
+                       'games ev': ev_played,
+                       '💎 cost per game': gem_cost_per_game,
+                       '$ cost per game': gem_cost_per_game / user_gems_per_usd,
+                       'value loss per game': (entry_cost - ev_value) / ev_played}
   if results_only:
       return df
   fig, ax = plt.subplots(figsize = (8, 3))
   ax.plot(df[[x_axis, '% of results']].set_index(x_axis), 'o-b', linewidth = 3, label = f'{user_winrate * 100:.0f}% wr')
-  if show_default:
-      ax.plot(default_df[[x_axis, '% of results']].set_index(x_axis), 'o-g', linewidth = 1, label = 'default')
+  if show_default and user_winrate != 0.5:
+      ax.plot(default_df[[x_axis, '% of results']].set_index(x_axis), 'o-g', linewidth = 1, label = 'default(50% wr)')
       plt.legend()
   for x, y in zip(df[x_axis], df['% of results']):
     plt.text(x = x, y = y + 1, s = '{:.1f}%'.format(y), color = 'blue')
@@ -109,116 +183,67 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, play_in_points, aggr
   plt.ylabel('% of results')
   plt.xlabel(x_axis)
   # Writing begins here
-  st.header(f'{events.tab_name_d[tab_name]} prize distribution for a {user_winrate * 100:.0f}% winrate ({entry_cost} gem/${entry_cost/user_gems_per_usd:.2f} entry)')
+  st.header(f'{events.tab_name_d[tab_name]} prize distribution for a {user_winrate * 100:.0f}% winrate (Entry cost: {str(entry_cost_gold) + "🪙 or " if entry_cost_gold > 0 else ""}{entry_cost}💎 (${entry_cost/user_gems_per_usd:.2f}))')
   st.pyplot(fig)
-  st.dataframe(df[[x_axis, '% of results', 'gem payout', 'pack prizes', 'play in points', 'usd value']], hide_index = True, use_container_width = True, column_config = column_config)
-  st.write(f'The expected gem payout for this event given a {winrate * 100:.0f}% winrate is **{ev:.1f}** gems (including play-in points).')
-  st.write(f'The expected pack payout is **{pack_ev:.1f}** packs.')
-  if ev > entry_cost:
-    st.write(f'That means an average **gain** of **{- rake:.1f}** gems (**${-rake/user_gems_per_usd:.2f}**) per event, or **{(- rake) * 100.0/entry_cost:.1f}%**')
+  st.dataframe(df[[x_axis, '% of results', 'games played' ,'gem payout', 'pack prizes', 'box prices', 'play in points', 'usd value']], hide_index = True, use_container_width = True, column_config = column_config)
+  if coin_payout:
+      st.write(f'The expected payout for this event given a {winrate * 100:.0f}% winrate is **{ev_gold:.1f}** 🪙.')
   else:
-    st.write(f'That means an average **loss** of **{rake:.1f}** gems (**${rake/user_gems_per_usd:.2f}**) per event, or **{(rake) * 100.0/entry_cost:.1f}%**')
-    efficiency = rake/pack_ev
-    st.write(f'This event converts **{rake:.1f}** gems to **{pack_ev:.1f}** packs, with an efficiency of **{efficiency:.1f}** gems per pack.')
+    st.write(f'The expected payout for this event given a {winrate * 100:.0f}% winrate is **{ev:.1f}**💎.')
+  if ev > entry_cost:
+      st.write(f'On average you will play **{ev_played:.2f}** games **gaining** **{-gem_cost_per_game:.2f}**💎($**{(-gem_cost_per_game / user_gems_per_usd):.2f}**) per game')
+  else:
+      st.write(f'On average you will play **{ev_played:.2f}** games **costing** **{gem_cost_per_game:.2f}**💎($**{(gem_cost_per_game / user_gems_per_usd):.2f}**) per game')
+  if coin_payout:
+      rake_gold = entry_cost_gold - ev_gold
+      if ev_gold > entry_cost_gold:
+        st.write(f'That means an average **gain** of **{- rake_gold:.1f}**🪙 per event, or **{(- rake_gold) * 100.0/entry_cost_gold:.1f}%**')
+      else:
+        st.write(f'That means an average **loss** of **{rake_gold:.1f}**🪙 per event, or **{(rake_gold) * 100.0/entry_cost_gold:.1f}%**')
+        efficiency = rake/pack_ev if pack_ev > 0 else 0
+        if pack_ev > 0:
+            st.write(f'This event converts **{pack_ev:.1f}**🪙 to **{pack_ev:.1f}** packs, with an efficiency of **{efficiency:.1f}**🪙 per pack.')
+  else:
+      if ev > entry_cost:
+        st.write(f'That means an average **gain** of **{- rake:.1f}**💎 (**${-rake/user_gems_per_usd:.2f}**) per event, or **{(- rake) * 100.0/entry_cost:.1f}%**')
+      else:
+        st.write(f'That means an average **loss** of **{rake:.1f}**💎 (**${rake/user_gems_per_usd:.2f}**) per event, or **{(rake) * 100.0/entry_cost:.1f}%**')
+        efficiency = rake/pack_ev if pack_ev > 0 else 0
+        if pack_ev > 0:
+            st.write(f'This event converts **{rake:.1f}**💎 to **{pack_ev:.1f}** packs, with an efficiency of **{efficiency:.1f}** gems per pack.')
+  if entry_cost_gold > 0 and not coin_payout:
+    st.write(f'This event can convert **{entry_cost_gold:.1f}**🪙 to **{ev:.1f}**💎 at a rate of **{gems_per_gold:.3f}** gems per gold.')
+  if coin_payout:
+      st.write(f'This event can convert **{entry_cost:.1f}**💎 to **{ev_gold:.1f}**🪙 at a rate of **{ev_gold/entry_cost:.1f}** gold per gem')
+  if ev_box > 0:
+      st.write(f'This event can convert **{entry_cost:.1f}**💎 to **{ev_box:.3f}** play booster boxes')
+  if pack_ev > 0:
+    st.write(f'The expected pack payout is **{pack_ev:.1f}** packs.')
+  if ev_value > entry_cost:
+    st.write(f'The perceived value **gain** of this event is **{ev_value - entry_cost:.1f}**💎 or **${(ev_value - entry_cost) / user_gems_per_usd:.1f}**')
+  else:
+    st.write(f'The perceived value **loss** of this event is **{entry_cost - ev_value:.1f}**💎 or **${(entry_cost - ev_value) / user_gems_per_usd:.1f}**')
 
 for tab_name in tab_names:
     with tab_dict[tab_name]:
       gem_prizes = events.gem_prize_d[tab_name]
       pack_prizes = events.pack_prize_d[tab_name]
+      box_prices = events.booster_box_price_d[tab_name]
+      pack_draft = events.pack_draft_d[tab_name]
+      pack_sealed = events.pack_sealed_d[tab_name]
       play_in_points = events.play_in_point_d[tab_name]
       entry_cost = events.entry_d[tab_name]
+      entry_cost_gold = events.entry_coin_d[tab_name]
       coin_payout = events.coin_payout_d[tab_name]
       event_object = event.Event(rounds = events.round_d[tab_name], win_thresh = events.win_thresh_d[tab_name], loss_thresh = events.loss_thresh_d[tab_name],
                                  bo1 = events.bo1_d[tab_name])
+
       if events.event_category_d[tab_name] == 'constructed':
           winrate = user_winrate
       else:
           winrate = limited_winrate
-      tab_info(tab_name, event_object, winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost, events.coin_payout_d[tab_name])
+      tab_info(tab_name, event_object, winrate, gem_prizes, pack_prizes, box_prices, play_in_points, aggregate, user_gems_per_usd, entry_cost, entry_cost_gold, pack_draft, pack_sealed, events.coin_payout_d[tab_name])
 
-
-
-
-telomere = """
-
-if tab_name in tab_names:
-    with tab_dict['Bo1 Constr.']:
-      tab_name = 'Bo1 Constructed'
-      gem_prizes = {0:25, 1:50, 2:75, 3:200, 4:300, 5:400, 6:450, 7:500}
-      pack_prizes = {0:0, 1:0, 2:1, 3:1, 4:1, 5:2, 6:2, 7:3}
-      play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:3}
-      entry_cost = 375
-      constructed_event = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
-      tab_info(tab_name, constructed_event, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
-
-
-
-with tab_dict['Bo3 Constr.']:
-  tab_name = 'Bo3 Constructed'
-  gem_prizes = {0:50, 1:100, 2:150, 3:600, 4:800, 5:1000}
-  pack_prizes = {0:1, 1:1, 2:2, 3:2, 4:2, 5:3}
-  play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:4}
-  entry_cost = 750
-  traditional_constructed = event.Event(rounds = 5, win_thresh = 5, loss_thresh = 5, bo1 = False)
-  tab_info(tab_name, traditional_constructed, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
-
-with tab_dict['Q. Draft']:
-  tab_name = 'Quick Draft'
-  gem_prizes = {0:50, 1:100, 2:200, 3:300, 4:450, 5:650, 6:850, 7:950}
-  pack_prizes = {0:1.2, 1:1.22, 2:1.24, 3:1.26, 4:1.3, 5:1.35, 6:1.4, 7:2}
-  play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0}
-  entry_cost = 750
-  quick_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
-  tab_info(tab_name, quick_draft, limited_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
-
-with tab_dict['Tr. Draft']:
-  tab_name = 'Traditional Draft'
-  gem_prizes = {0:100, 1:250, 2:1000, 3:2500}
-  pack_prizes = {0:1, 1:1, 2:3, 3:6}
-  play_in_points = {0:1, 1:0, 2:0, 3:2}
-  entry_cost = 1500
-  traditional_draft = event.Event(rounds = 3, win_thresh = 3, loss_thresh = 3, bo1 = False)
-  tab_info(tab_name, traditional_draft, limited_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
-
-with tab_dict['Pr. Draft']:
-  tab_name = 'Premier Draft'
-  gem_prizes = {0:50, 1:100, 2:250, 3:1000, 4:1400, 5:1600, 6:1800, 7:2200}
-  pack_prizes = {0:1, 1:1, 2:2, 3:2, 4:3, 5:4, 6:5, 7:6}
-  play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0}
-  entry_cost = 1500
-  premier_draft = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
-  tab_info(tab_name, premier_draft, limited_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
-
-
-with tab_dict['Metagame Challenge']:
-    tab_name = 'Metagame Challenge'
-    gem_prizes = {0:500, 1:1000, 2:1500, 3:2000, 4:2500, 5:3000, 6:4000, 7:5000}
-    pack_prizes = {0:0, 1:0, 2:1, 3:3, 4:5, 5:10, 6:20, 7:30}
-    play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0}
-    entry_cost = 400
-    metagame_challenge = event.Event(rounds = 7, win_thresh = 7, loss_thresh = 1, bo1 = False)
-    tab_info(tab_name, metagame_challenge, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost, coin_payout = True)
-
-with tab_dict['Sealed']:
-    tab_name = 'Sealed'
-    gem_prizes = {0:200, 1:400, 2:600, 3:1200, 4:1400, 5:1600, 6:2000, 7:2200}
-    pack_prizes = {0:3, 1:3, 2:3, 3:3, 4:3, 5:3, 6:3, 7:3}
-    play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0}
-    entry_cost = 2000
-    sealed = event.Event(rounds = 9, win_thresh = 7, loss_thresh = 3, bo1 = True)
-    tab_info(tab_name, sealed, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
-
-
-with tab_dict['Tr. Sealed']:
-    tab_name = 'Tr. Sealed'
-    gem_prizes = {0:200, 1:500, 2:1200, 3:1800, 4:2200}
-    pack_prizes = {0:3, 1:3, 2:3, 3:3, 4:3}
-    play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0}
-    entry_cost = 2000
-    traditional_sealed = event.Event(rounds = 5, win_thresh = 4, loss_thresh = 2, bo1 = True)
-    tab_info(tab_name, traditional_sealed, user_winrate, gem_prizes, pack_prizes, play_in_points, aggregate, user_gems_per_usd, entry_cost)
-
-"""
 
 st.divider()
 if same_winrate:
@@ -227,10 +252,24 @@ else:
     st.header(f'Summary of events for {user_winrate * 100:.0f}% constructed and {limited_winrate * 100:.0f}% limited winrates')
 summary_df = pd.DataFrame(summary).transpose().reset_index()
 summary_df = summary_df.rename(columns = {'index': 'event name'})
-summary_config = {'usd loss per event': st.column_config.NumberColumn(label = None, format= "$%.2f"),
-                  'gem ev': st.column_config.NumberColumn(label = None, format = '%.1f'),
-                  'gem ev %': st.column_config.ProgressColumn(label = None, format = '%.1f%%', min_value = 0, max_value = 100),
+summary_config = {'💎 loss in $': st.column_config.NumberColumn(label = None, format= "$%.2f"),
+                  'value loss in $': st.column_config.NumberColumn(label = None, format= "$%.2f"),
+                  '💎 return': st.column_config.NumberColumn(label = None, format = '%.1f'),
+                  '💎 return %': st.column_config.ProgressColumn(label = None, format = '%.1f%%', min_value = 0, max_value = 100),
                   'pack ev': st.column_config.NumberColumn(label = None, format = '%.1f'),
-                  'gems per pack': st.column_config.NumberColumn(label = None, format = '%.1f')}
-st.dataframe(data = summary_df, hide_index = True, use_container_width = True, column_config = summary_config)
+                  '💎 per pack': st.column_config.NumberColumn(label = None, format = '%.1f'),
+                  '🪙 per pack': st.column_config.NumberColumn(label=None, format='%.0f'),
+                  '💎 per 🪙': st.column_config.NumberColumn(label = None, format = '%.3f'),
+                  '💎 value': st.column_config.NumberColumn(label=None, format='%.1f'),
+                  '💎 value %': st.column_config.ProgressColumn(label=None, format='%.1f%%', min_value=0, max_value=100),
+                  '💎 cost per game': st.column_config.NumberColumn(label=None, format='%.1f'),
+                  '$ cost per game': st.column_config.NumberColumn(label=None, format="$%.2f"),
+                  '💎 value loss per game': st.column_config.NumberColumn(label=None, format="$%.2f")
+                  }
+summary_df = summary_df.sort_values('💎 value %', ascending=False)
+default_columns = ['event name', 'entry 🪙', 'entry 💎', '💎 return', '💎 return %', '💎 loss in $', '💎 value', '💎 value %', 'value loss in $', '💎 per 🪙', '💎 cost per game', '$ cost per game']
+
+column_names = st.multiselect('Select columns to display:', options = summary_df.columns, default = default_columns)
+
+st.dataframe(data = summary_df[column_names], hide_index = True, use_container_width = False, column_config = summary_config)
 st.write('(Click on column header to sort table)')
