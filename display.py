@@ -185,7 +185,7 @@ def tab_info(tab_name, e, winrate, gem_prizes, pack_prizes, box_prices, play_in_
   # Writing begins here
   st.header(f'{events.tab_name_d[tab_name]} prize distribution for a {user_winrate * 100:.0f}% winrate (Entry cost: {str(entry_cost_gold) + "🪙 or " if entry_cost_gold > 0 else ""}{entry_cost}💎 (${entry_cost/user_gems_per_usd:.2f}))')
   st.pyplot(fig)
-  st.dataframe(df[[x_axis, '% of results', 'games played' ,'gem payout', 'pack prizes', 'box prices', 'play in points', 'usd value']], hide_index = True, use_container_width = True, column_config = column_config)
+  st.dataframe(df[[x_axis, '% of results', 'games played' ,'gem payout', 'pack prizes', 'box prices', 'play in points', 'usd value']], hide_index = True, width = 'stretch', column_config = column_config)
   if coin_payout:
       st.write(f'The expected payout for this event given a {winrate * 100:.0f}% winrate is **{ev_gold:.1f}** 🪙.')
   else:
@@ -271,5 +271,5 @@ default_columns = ['event name', 'entry 🪙', 'entry 💎', '💎 return', '�
 
 column_names = st.multiselect('Select columns to display:', options = summary_df.columns, default = default_columns)
 
-st.dataframe(data = summary_df[column_names], hide_index = True, use_container_width = False, column_config = summary_config)
+st.dataframe(data = summary_df[column_names], hide_index = True, width = 'content', column_config = summary_config)
 st.write('(Click on column header to sort table)')
