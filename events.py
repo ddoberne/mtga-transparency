@@ -29,7 +29,7 @@ def populate(name,
              coin_payout = False,
              pack_sealed = 0,
              pack_draft = 0,
-             booster_box_price = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0}):
+             booster_box_price = None):
     tab_name_d[name] = tab_name
     gem_prize_d[name] = gem_prizes
     pack_draft_d[name] = pack_draft
@@ -44,7 +44,10 @@ def populate(name,
     bo1_d[name] = bo1
     event_category_d[name] = event_category
     coin_payout_d[name] = coin_payout
-    booster_box_price_d[name] = booster_box_price
+    if booster_box_price is None:
+        booster_box_price_d[name] = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0}
+    else:
+        booster_box_price_d[name] = booster_box_price
 
 name = 'Bo1 Constr.'
 tab_name = 'Bo1 Constructed'
@@ -139,7 +142,7 @@ populate(name, tab_name, gem_prizes, pack_prizes, play_in_points, entry_cost, en
 
 name = 'Pick 2 Draft'
 tab_name = 'Pick 2 Draft'
-gem_prizes = {0:50, 1:150, 2:250, 3:1000, 4:1400}
+gem_prizes = {0:50, 1:150, 2:800, 3:1000, 4:1300}
 pack_prizes = {0:1, 1:1, 2:1, 3:2, 4:3}
 play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0}
 entry_cost = 900
