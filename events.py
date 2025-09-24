@@ -142,7 +142,7 @@ populate(name, tab_name, gem_prizes, pack_prizes, play_in_points, entry_cost, en
 
 name = 'Pick 2 Draft'
 tab_name = 'Pick 2 Draft'
-gem_prizes = {0:50, 1:150, 2:250, 3:1000, 4:1400}
+gem_prizes = {0:50, 1:150, 2:800, 3:1000, 4:1300}
 pack_prizes = {0:1, 1:1, 2:1, 3:2, 4:3}
 play_in_points = {0:0, 1:0, 2:0, 3:0, 4:0}
 entry_cost = 900
